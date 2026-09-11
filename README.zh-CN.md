@@ -1,12 +1,14 @@
 # Codex Maya 插件
 
-> 面向 Codex 的安全、可审查 Autodesk Maya 自动化插件，目前处于设计阶段。
+<img src="assets/logo.png" alt="Codex Maya Logo" width="128">
+
+> 面向 Codex 的安全、可审查 Autodesk Maya 自动化兼容基础。
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
 ## 当前状态
 
-仓库目前只有架构、技术方案和实施计划，尚无可安装插件，也不声明已经验证 Maya 兼容性。
+仓库现已具备兼容插件基础：manifest、Marketplace 元数据、品牌资产、Legal 文档、验证脚本、测试和实施目录。Maya 业务工作流尚未实现，也未声明通过 Maya 运行兼容性验证。
 
 ## 项目定位
 
@@ -33,4 +35,4 @@ Codex -> 受控 Maya 运行器 -> mayapy / Maya batch -> Playblast -> 验证 -> 
 
 ## 许可证
 
-许可证选择属于实施任务；当前设计仓库尚不构成许可证授权。
+Apache-2.0，见 [LICENSE](LICENSE)。

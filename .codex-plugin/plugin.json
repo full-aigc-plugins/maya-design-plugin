@@ -1,0 +1,32 @@
+{
+  "name": "codex-maya",
+  "version": "0.1.0",
+  "description": "Safe, reviewable Autodesk Maya scene inspection and Playblast workflows for Codex.",
+  "author": {"name": "Full Stack Skills / PartMe.AI", "url": "https://github.com/partme-ai"},
+  "homepage": "https://github.com/partme-ai/codex-maya-plugin",
+  "repository": "https://github.com/partme-ai/codex-maya-plugin",
+  "license": "Apache-2.0",
+  "keywords": ["maya", "3d", "playblast", "animation", "codex"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Codex Maya",
+    "shortDescription": "Inspect Maya scenes and create safe Playblasts",
+    "longDescription": "Prepare reviewable Maya scene inspections and Playblast previews with explicit project scopes, media validation, diagnostics, and temporary-state restoration.",
+    "developerName": "Full Stack Skills / PartMe.AI",
+    "category": "Creativity",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "websiteURL": "https://github.com/partme-ai/codex-maya-plugin",
+    "privacyPolicyURL": "https://github.com/partme-ai/codex-maya-plugin/blob/main/PRIVACY.md",
+    "termsOfServiceURL": "https://github.com/partme-ai/codex-maya-plugin/blob/main/TERMS.md",
+    "defaultPrompt": [
+      "Inspect this Maya scene and summarize its cameras and timeline",
+      "Create a safe Playblast and restore the Maya scene state",
+      "Diagnose this Maya preview failure without installing software"
+    ],
+    "brandColor": "#14B8A6",
+    "composerIcon": "./assets/composer-icon.png",
+    "logo": "./assets/logo.png",
+    "logoDark": "./assets/logo-dark.png",
+    "screenshots": []
+  }
+}

@@ -18,6 +18,10 @@
 - Restore all temporary state and never retry Playblast automatically.
 - Runtime compatibility requires actual Maya evidence.
 
+## Foundation baseline completed 2026-09-12
+
+The repository already contains the validated `codex-maya` compatibility manifest, URL marketplace entry, Apache-2.0/legal files, transparent brand assets, implementation directories, distribution validator, and RED/GREEN foundation tests. Tasks below must extend these files rather than recreate or overwrite them. This baseline does not implement or validate Maya runtime workflows.
+
 ### Task 1: Manifest and shared receipts
 
 - [ ] Write failing identity and schema tests.

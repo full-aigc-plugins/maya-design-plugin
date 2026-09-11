@@ -1,12 +1,14 @@
 # Codex Maya Plugin
 
-> Design-stage Codex workflows for safe, reviewable Autodesk Maya automation.
+<img src="assets/logo.png" alt="Codex Maya logo" width="128">
+
+> Compatibility foundation for safe, reviewable Autodesk Maya automation in Codex.
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
 ## Status
 
-This repository contains architecture, technical solution, and implementation plans only. No installable plugin or Maya compatibility claim exists yet.
+The compatibility plugin foundation is now present: manifest, marketplace metadata, brand assets, legal documents, validation script, tests, and implementation directories. Maya workflows and runtime compatibility remain unimplemented and unverified.
 
 ## Purpose
 
@@ -33,4 +35,4 @@ Codex -> guarded Maya runner -> mayapy / Maya batch -> Playblast -> validation -
 
 ## License
 
-License selection is an implementation task. This design-only repository grants no license yet.
+Apache-2.0 — see [LICENSE](LICENSE).
