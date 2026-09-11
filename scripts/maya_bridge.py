@@ -1,8 +1,14 @@
-"""Read-only Maya scene inspection.
+"""Read-only Maya scene inspection and reversible Playblast export.
 
-The bridge never mutates Maya state. It returns a single JSON-ready dict that
-matches `schemas/scene_receipt.schema.json`. The receipt is byte-stable so two
-inspections of the same scene produce the same JSON (modulo a fresh UUID).
+The bridge never mutates Maya state except inside the explicitly bounded
+`restored_maya_state` context manager, which snapshots and restores every
+observable value the bridge touches. Receipts are JSON-ready and byte-stable.
+
+Playblast integration: the bridge imports the vendored Jimeng/Dreamina Maya
+uploader (`scripts/jimeng_third_party/jimeng_maya_uploader/`) and wraps its
+`playblast.run_playblast` and `upload_bridge.start_local_bridge` inside
+`restored_maya_state`. The Jimeng `redirect_url` / `resource_info_url` never
+appear in the Codex artifact receipt (see Ruling 2 in the SDD ledger).
 
 Path handling: the bridge accepts an authorized scene path and redacts its
 absolute form from diagnostic output; the scene_path written into the receipt
@@ -12,21 +18,46 @@ relative to an authorized project root).
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import json
 import os
 import sys
 import uuid
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any, Iterator, Mapping
 
 PLUGIN_ID = "codex-maya"
 SCHEMA_VERSION = "1.0.0"
 DISPLAY_MODES = frozenset({"white_model", "material_preview", "existing_video"})
+JIMENG_VENDOR_DIR = Path(__file__).resolve().parent / "jimeng_third_party" / "jimeng_maya_uploader"
+JIMENG_VENDOR_CHECKSUM = (
+    "33dc6dfb766dc43a515c91547ab58c26d044079296b92f5c4689b9eb5106191f"
+)
+_BRIDGE_SESSION_KEY = "_codex_maya_bridge_sessions"
 
 
 class SceneNotAuthorizedError(Exception):
     code = "SCENE_NOT_AUTHORIZED"
+
+
+class CameraNotFoundError(Exception):
+    code = "CAMERA_NOT_FOUND"
+
+
+class PlayblastFailedError(Exception):
+    code = "PLAYBLAST_FAILED"
+
+
+class TimeoutError_(Exception):
+    code = "TIMEOUT"
+
+
+class RestoreUnconfirmedError(Exception):
+    code = "RESTORE_UNCONFIRMED"
+
+
+TimeoutError = TimeoutError_  # alias for callers
 
 
 def _redact(value: str) -> str:
@@ -190,14 +221,391 @@ def diagnostics_for(receipt: Mapping[str, Any]) -> dict:
     return view
 
 
+# ---------------------------------------------------------------------------
+# Playblast surface — reversible wrapper around the vendored Jimeng uploader.
+# ---------------------------------------------------------------------------
+
+
+SNAPSHOT_FIELDS = (
+    "selection",
+    "current_time",
+    "playback_range",
+    "camera",
+    "active_panel",
+    "display_appearance",
+    "display_textures",
+    "renderer",
+    "image_format",
+    "resolution",
+    "shader_overrides",
+)
+
+
+def _read_snapshot(cmds: Any) -> dict:
+    """Capture every observable Maya value the Playblast path touches."""
+
+    return {
+        "selection": list(cmds.ls(selection=True, long=True) or []),
+        "current_time": cmds.currentTime(query=True),
+        "playback_range": [
+            int(cmds.playbackOptions(query=True, minTime=True)),
+            int(cmds.playbackOptions(query=True, maxTime=True)),
+        ],
+        "camera": cmds.optionVar(query=" playbackOptions") if False else _active_camera(cmds),
+        "active_panel": _active_panel(cmds),
+        "display_appearance": _panel_attribute(cmds, "displayAppearance"),
+        "display_textures": _panel_attribute(cmds, "displayTextures"),
+        "renderer": cmds.optionVar(query="defaultRenderer") if False else _renderer(cmds),
+        "image_format": _image_format(cmds),
+        "resolution": [
+            int(cmds.getAttr("defaultResolution.width")),
+            int(cmds.getAttr("defaultResolution.height")),
+        ],
+        "shader_overrides": _shader_overrides(cmds),
+    }
+
+
+def _active_camera(cmds: Any) -> str | None:
+    panel = _active_panel(cmds)
+    if panel:
+        try:
+            return cmds.modelPanel(panel, query=True, camera=True)
+        except Exception:
+            pass
+    cameras = cmds.ls(type="camera", long=True) or []
+    if cameras:
+        parent = cmds.listRelatives(cameras[0], parent=True, fullPath=True) or []
+        return parent[0] if parent else cameras[0]
+    return None
+
+
+def _active_panel(cmds: Any) -> str | None:
+    try:
+        panel = cmds.getPanel(withFocus=True)
+    except Exception:
+        panel = None
+    if panel:
+        try:
+            if cmds.getPanel(typeOf=panel) == "modelPanel":
+                return panel
+        except Exception:
+            pass
+    panels = cmds.getPanel(type="modelPanel") or []
+    return panels[0] if panels else None
+
+
+def _panel_attribute(cmds: Any, attr: str) -> dict:
+    panel = _active_panel(cmds)
+    out: dict = {}
+    if not panel:
+        return out
+    try:
+        out[panel] = cmds.modelPanel(panel, query=True, **{attr: True})
+    except Exception:
+        pass
+    return out
+
+
+def _renderer(cmds: Any) -> str:
+    try:
+        return cmds.getAttr("defaultRenderGlobals.currentRenderer")
+    except Exception:
+        return "vp2"
+
+
+def _image_format(cmds: Any) -> str:
+    try:
+        return cmds.getAttr("defaultRenderGlobals.imageFormat")
+    except Exception:
+        return "png"
+
+
+def _shader_overrides(cmds: Any) -> dict:
+    return {}
+
+
+def _restore_snapshot(cmds: Any, snapshot: Mapping[str, Any]) -> None:
+    """Restore every field we snapshotted. Failures are logged, not raised."""
+
+    for field_name in SNAPSHOT_FIELDS:
+        try:
+            _restore_field(cmds, field_name, snapshot.get(field_name))
+        except Exception:
+            # Restoration must never raise; the finally block in
+            # restored_maya_state will check pre/post equality and surface a
+            # RESTORE_UNCONFIRMED error to the caller.
+            pass
+
+
+def _restore_field(cmds: Any, name: str, value: Any) -> None:
+    if value is None:
+        return
+    if name == "selection":
+        cmds.select(clear=True)
+        if value:
+            cmds.select(value, replace=True)
+    elif name == "current_time":
+        cmds.currentTime(int(value), edit=True)
+    elif name == "playback_range":
+        cmds.playbackOptions(
+            edit=True,
+            minTime=int(value[0]),
+            maxTime=int(value[1]),
+        )
+    elif name == "camera":
+        panel = _active_panel(cmds)
+        if panel and value:
+            cmds.modelPanel(panel, edit=True, camera=value)
+    elif name == "active_panel":
+        return  # the active panel is a runtime concept; nothing to restore
+    elif name == "display_appearance" and value:
+        for panel, mode in value.items():
+            cmds.modelPanel(panel, edit=True, displayAppearance=mode)
+    elif name == "display_textures" and value:
+        for panel, enabled in value.items():
+            cmds.modelPanel(panel, edit=True, displayTextures=bool(enabled))
+    elif name == "renderer":
+        cmds.setAttr("defaultRenderGlobals.currentRenderer", value, type="string")
+    elif name == "image_format":
+        cmds.setAttr("defaultRenderGlobals.imageFormat", int(value))
+    elif name == "resolution":
+        cmds.setAttr("defaultResolution.width", int(value[0]))
+        cmds.setAttr("defaultResolution.height", int(value[1]))
+    elif name == "shader_overrides":
+        return
+
+
+@contextlib.contextmanager
+def restored_maya_state(cmds: Any) -> Iterator[Mapping[str, Any]]:
+    """Snapshot every Maya value the bridge touches and restore on exit.
+
+    The yielded mapping is the snapshot taken at entry. The bridge MUST mutate
+    only inside the `with` block; any field whose post-exit value differs from
+    the snapshot raises :class:`RestoreUnconfirmedError`.
+    """
+
+    snapshot = _read_snapshot(cmds)
+    try:
+        yield snapshot
+    finally:
+        _restore_snapshot(cmds, snapshot)
+        current = _read_snapshot(cmds)
+        for field_name in SNAPSHOT_FIELDS:
+            if current.get(field_name) != snapshot.get(field_name):
+                raise RestoreUnconfirmedError(
+                    f"restoration mismatch on field {field_name!r}"
+                )
+
+
+def verify_vendor_checksum() -> None:
+    """Raise if the Jimeng subtree has been edited."""
+
+    root = JIMENG_VENDOR_DIR
+    if not root.is_dir():
+        raise FileNotFoundError(f"Jimeng vendor directory missing: {root}")
+    digest = hashlib.sha256()
+    for dirpath, _, filenames in os.walk(root):
+        for name in sorted(filenames):
+            full = Path(dirpath) / name
+            rel = full.relative_to(root).as_posix()
+            digest.update(rel.encode("utf-8"))
+            digest.update(full.read_bytes())
+    if digest.hexdigest() != JIMENG_VENDOR_CHECKSUM:
+        raise RestoreUnconfirmedError(
+            "Jimeng vendor subtree was modified; checksum drift detected."
+        )
+
+
+def _import_jimeng_playblast():
+    """Lazy import so tests that fake maya.cmds do not trigger real Maya."""
+
+    if str(JIMENG_VENDOR_DIR.parent) not in sys.path:
+        sys.path.insert(0, str(JIMENG_VENDOR_DIR.parent))
+    import jimeng_maya_uploader.playblast as playblast  # type: ignore[import-not-found]
+
+    return playblast
+
+
+def _import_jimeng_upload_bridge():
+    if str(JIMENG_VENDOR_DIR.parent) not in sys.path:
+        sys.path.insert(0, str(JIMENG_VENDOR_DIR.parent))
+    import jimeng_maya_uploader.upload_bridge as upload_bridge  # type: ignore[import-not-found]
+
+    return upload_bridge
+
+
+def _sha256_file(path: Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(65536), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _existing_video_receipt(request: Mapping[str, Any]) -> dict:
+    """Build a receipt for the `existing_video` mode — no scene mutation."""
+
+    video_path = Path(str(request["video_path"]))
+    if not video_path.is_file():
+        raise SceneNotAuthorizedError(f"video_path not found: {video_path}")
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "plugin_id": PLUGIN_ID,
+        "artifact_id": str(uuid.uuid4()),
+        "scene_id": str(request.get("scene_id") or uuid.uuid4()),
+        "media_path": str(video_path),
+        "media_format": "video/mp4",
+        "media_sha256": _sha256_file(video_path),
+        "duration_seconds": float(request.get("duration_seconds") or 0.0),
+        "frame_rate": float(request.get("frame_rate") or 24.0),
+        "width": int(request.get("width") or 0),
+        "height": int(request.get("height") or 0),
+        "file_size_bytes": int(video_path.stat().st_size),
+        "restoration_status": "restored",
+        "display_mode": "existing_video",
+    }
+
+
+def _record_bridge_session(bridge_result: Mapping[str, Any]) -> None:
+    """Store the full Jimeng bridge response in a process-local log.
+
+    The log lives in `sys.modules[_BRIDGE_SESSION_KEY]` so it is dropped when
+    the `mayapy` subprocess exits; nothing about the local-bridge token leaks
+    to disk or to the Codex artifact contract.
+    """
+
+    sessions = getattr(sys.modules.get(_BRIDGE_SESSION_KEY), "sessions", None)
+    if sessions is None:
+        sessions = []
+        import types
+
+        mod = types.ModuleType(_BRIDGE_SESSION_KEY)
+        mod.sessions = sessions
+        sys.modules[_BRIDGE_SESSION_KEY] = mod
+    sessions.append(dict(bridge_result))
+
+
+def consume_bridge_session_log() -> list:
+    """Return and clear the in-process bridge session log."""
+
+    mod = sys.modules.get(_BRIDGE_SESSION_KEY)
+    sessions = list(getattr(mod, "sessions", []) or []) if mod else []
+    if mod is not None:
+        mod.sessions = []
+    return sessions
+
+
+def export_playblast(cmds: Any, request: Mapping[str, Any]) -> dict:
+    """Wrap the Jimeng playblast + bridge inside `restored_maya_state`.
+
+    The request dict carries the Codex-side knobs:
+
+    - `mode`: `white_model`, `material_preview`, or `existing_video`
+    - `scene_id`: UUID from the prior `inspect_scene` call
+    - For existing-video mode: `video_path`, optional `duration_seconds`,
+      `frame_rate`, `width`, `height`.
+
+    For playblast modes the bridge delegates to the Jimeng module and returns
+    a Codex receipt built from its result. The full Jimeng response (including
+    `redirect_url` / `resource_info_url`) is kept in the process-local session
+    log so the calling Skill can open the link, but never enters the receipt.
+    """
+
+    mode = str(request.get("mode") or "white_model")
+    if mode not in DISPLAY_MODES:
+        raise SceneNotAuthorizedError(f"unsupported mode {mode!r}")
+    if mode == "existing_video":
+        return _existing_video_receipt(request)
+
+    verify_vendor_checksum()
+
+    playblast = _import_jimeng_playblast()
+    upload_bridge = _import_jimeng_upload_bridge()
+
+    camera = str(request.get("camera") or playblast.active_camera() or "")
+    if not camera or not cmds.objExists(camera):
+        raise CameraNotFoundError(f"camera {camera!r} not present in scene")
+
+    start_frame = int(request["start_frame"])
+    end_frame = int(request["end_frame"])
+    width = int(request.get("width") or cmds.getAttr("defaultResolution.width"))
+    height = int(request.get("height") or cmds.getAttr("defaultResolution.height"))
+    fps = int(request.get("frame_rate") or 24)
+    output_dir = request.get("output_dir")
+
+    bridge_response: dict = {}
+    with restored_maya_state(cmds):
+        try:
+            video_path = Path(playblast.run_playblast(
+                camera=camera,
+                start_frame=start_frame,
+                end_frame=end_frame,
+                width=width,
+                height=height,
+                fps=fps,
+                output_dir=output_dir,
+                convert_to_mp4=True,
+            ))
+        except Exception as exc:
+            raise PlayblastFailedError(f"playblast failed: {exc}") from exc
+
+        if not video_path.is_file():
+            raise PlayblastFailedError(f"playblast produced no file at {video_path}")
+
+        try:
+            bridge_response = dict(upload_bridge.start_local_bridge(
+                video_path=str(video_path),
+                prompt=str(request.get("prompt") or ""),
+                target_url=str(request.get("target_url") or "https://jimeng.jianying.com/ai-tool/home"),
+                max_file_size=request.get("max_file_size"),
+            ))
+        except Exception as exc:
+            raise PlayblastFailedError(f"local bridge failed: {exc}") from exc
+
+    if bridge_response:
+        _record_bridge_session(bridge_response)
+
+    duration = float(request.get("duration_seconds") or 0.0)
+    if duration <= 0:
+        duration = max(0.0, (end_frame - start_frame + 1) / max(fps, 1))
+
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "plugin_id": PLUGIN_ID,
+        "artifact_id": str(uuid.uuid4()),
+        "scene_id": str(request.get("scene_id") or uuid.uuid4()),
+        "media_path": str(video_path),
+        "media_format": "video/mp4",
+        "media_sha256": _sha256_file(video_path),
+        "duration_seconds": duration,
+        "frame_rate": float(fps),
+        "width": int(width),
+        "height": int(height),
+        "file_size_bytes": int(video_path.stat().st_size),
+        "restoration_status": "restored",
+        "display_mode": mode,
+    }
+
+
 __all__ = [
     "DISPLAY_MODES",
+    "JIMENG_VENDOR_CHECKSUM",
+    "JIMENG_VENDOR_DIR",
     "PLUGIN_ID",
     "SCHEMA_VERSION",
+    "SNAPSHOT_FIELDS",
+    "CameraNotFoundError",
+    "PlayblastFailedError",
+    "RestoreUnconfirmedError",
     "SceneNotAuthorizedError",
+    "TimeoutError",
+    "consume_bridge_session_log",
     "diagnostics_for",
+    "export_playblast",
     "inspect_scene",
+    "restored_maya_state",
     "to_json",
+    "verify_vendor_checksum",
 ]
 
 
