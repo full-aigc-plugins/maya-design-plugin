@@ -120,13 +120,12 @@ class SceneReceiptContractTests(unittest.TestCase):
         errors = list(self.validator.iter_errors(receipt))
         self.assertTrue(errors)
 
-    def test_frame_range_inverted_rejected(self) -> None:
+    def test_frame_range_shape_permits_inversion(self) -> None:
         receipt = valid_scene_receipt()
         receipt["frame_range"] = {"start": 240, "end": 1, "current": 1}
-        # Schema accepts any non-negative integers; business rule rejects inverted ranges.
-        # Bridge code (Task 3) will enforce this; assert schema permits then a contract
-        # helper would reject it. Here we only assert that schema shape is not silently
-        # widened.
+        # Schema accepts any non-negative integers; the bridge (Task 3) enforces the
+        # start <= end business rule. Asserting this here pins the contract split:
+        # schema = shape, bridge = rule.
         errors = list(self.validator.iter_errors(receipt))
         self.assertEqual(errors, [], "schema permits the shape; bridge enforces inversion")
 
