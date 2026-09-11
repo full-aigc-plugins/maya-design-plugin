@@ -9,6 +9,13 @@ import struct
 import sys
 from pathlib import Path
 
+try:
+    from jsonschema import Draft202012Validator
+    from jsonschema.exceptions import SchemaError
+except ImportError:  # pragma: no cover - validator must run before Skill workflows
+    Draft202012Validator = None
+    SchemaError = Exception
+
 NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 SECRET_PATTERNS = (
     re.compile(rb"AIza[0-9A-Za-z_-]{20,}"),
@@ -25,6 +32,10 @@ REQUIRED_FILES = (
     "docs/portable-migration.md",
 )
 REQUIRED_DIRECTORIES = ("assets", "skills", "schemas", "scripts", "tests")
+SHARED_SCHEMAS = (
+    "schemas/scene_receipt.schema.json",
+    "schemas/artifact_receipt.schema.json",
+)
 
 
 def load_json(target: Path) -> dict:
@@ -108,6 +119,21 @@ def validate(root: Path) -> list[str]:
         data = target.read_bytes()
         if any(pattern.search(data) for pattern in SECRET_PATTERNS):
             errors.append(f"secret-like content detected: {target.relative_to(root)}")
+
+    if Draft202012Validator is None:
+        errors.append("jsonschema is required to validate shared receipt schemas (install requirements-dev.txt)")
+        return errors
+
+    for relative in SHARED_SCHEMAS:
+        target = root / relative
+        if not target.is_file():
+            errors.append(f"missing shared schema: {relative}")
+            continue
+        try:
+            schema = json.loads(target.read_text(encoding="utf-8"))
+            Draft202012Validator.check_schema(schema)
+        except (json.JSONDecodeError, SchemaError) as exc:
+            errors.append(f"invalid JSON Schema 2020-12 in {relative}: {exc}")
     return errors
 
 

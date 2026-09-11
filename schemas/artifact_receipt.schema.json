@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/partme-ai/codex-maya-plugin/schemas/artifact_receipt.schema.json",
+  "title": "Codex Maya Artifact Receipt",
+  "description": "Validated, reversible Playblast artifact handed off to codex-dreamina-3d by codex-maya.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plugin_id",
+    "artifact_id",
+    "scene_id",
+    "media_path",
+    "media_format",
+    "media_sha256",
+    "duration_seconds",
+    "frame_rate",
+    "width",
+    "height",
+    "file_size_bytes",
+    "restoration_status",
+    "display_mode"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "plugin_id": {
+      "type": "string",
+      "const": "codex-maya"
+    },
+    "artifact_id": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+    },
+    "scene_id": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+    },
+    "media_path": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Relative path from the authorized output root; absolute paths are forbidden."
+    },
+    "media_format": {
+      "type": "string",
+      "const": "video/mp4"
+    },
+    "media_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "Lowercase hexadecimal SHA-256 digest, exactly 64 characters."
+    },
+    "duration_seconds": {
+      "type": "number",
+      "minimum": 0
+    },
+    "frame_rate": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "width": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "height": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "file_size_bytes": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "restoration_status": {
+      "type": "string",
+      "enum": ["restored", "partial", "unconfirmed"]
+    },
+    "display_mode": {
+      "type": "string",
+      "enum": ["white_model", "material_preview", "existing_video"]
+    }
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/partme-ai/codex-maya-plugin/schemas/scene_receipt.schema.json",
+  "title": "Codex Maya Scene Receipt",
+  "description": "Read-only snapshot of an authorized Maya scene produced by codex-maya before any mutation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plugin_id",
+    "scene_id",
+    "scene_path",
+    "approved_camera",
+    "frame_range",
+    "resolution",
+    "display_mode",
+    "materials",
+    "references",
+    "namespaces",
+    "callbacks",
+    "unknown_plugins",
+    "inspection_status"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "plugin_id": {
+      "type": "string",
+      "const": "codex-maya"
+    },
+    "scene_id": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+    },
+    "scene_path": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Relative path from the authorized project root; absolute paths are forbidden."
+    },
+    "approved_camera": {
+      "type": "string",
+      "minLength": 1
+    },
+    "frame_range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end", "current"],
+      "properties": {
+        "start": { "type": "integer", "minimum": 0 },
+        "end": { "type": "integer", "minimum": 0 },
+        "current": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "resolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height"],
+      "properties": {
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "display_mode": {
+      "type": "string",
+      "enum": ["white_model", "material_preview", "existing_video"]
+    },
+    "materials": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "references": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "namespaces": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "callbacks": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "unknown_plugins": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "inspection_status": {
+      "type": "string",
+      "enum": ["ok", "degraded"]
+    }
+  }
+}
