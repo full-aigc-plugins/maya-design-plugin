@@ -93,6 +93,30 @@ class SkillFileTests(unittest.TestCase):
                 fm, _ = _parse_skill(name)
                 self.assertLessEqual(len(fm["description"]), 1500)
 
+    def test_description_is_a_single_line_value(self) -> None:
+        """Guards the regression where `description: |` made the value the literal '|'.
+
+        Codex (and the TRACE evaluator) parse frontmatter with a naive
+        `line.split(":", 1)`. A YAML block scalar therefore yields a one-character
+        description, and the Skill never triggers. Assert the raw frontmatter line
+        carries real text.
+        """
+
+        for name in REQUIRED_SKILLS:
+            with self.subTest(skill=name):
+                raw = (SKILLS_DIR / name / "SKILL.md").read_text(encoding="utf-8")
+                match = FRONTMATTER_RE.match(raw)
+                self.assertIsNotNone(match, name)
+                desc_lines = [
+                    line for line in match.group("body").splitlines()
+                    if line.startswith("description:")
+                ]
+                self.assertEqual(len(desc_lines), 1, f"{name}: exactly one description line")
+                value = desc_lines[0].split(":", 1)[1].strip()
+                self.assertNotIn(value, ("|", ">", ""), f"{name}: block scalar not allowed")
+                self.assertGreater(len(value), 100, f"{name}: description too short to route on")
+                self.assertLessEqual(len(value), 1024, f"{name}: description exceeds 1024 chars")
+
 
 class SkillDistinctnessTests(unittest.TestCase):
     """Ensure each Skill's description mentions unique trigger words."""
@@ -126,12 +150,20 @@ class SkillDistinctnessTests(unittest.TestCase):
 
 
 class SkillSafetyTests(unittest.TestCase):
-    """Skills must not promise to install software, auto-retry, or mutate Maya."""
+    """Skills must not promise to install software, auto-retry, or mutate Maya.
 
+    Disclaimers may be written in Chinese or English; these tests assert the
+    *substance* is present rather than pinning one exact wording, so the Skill
+    authors can rephrase without breaking the gate.
+    """
+
+    # Phrasings that would mean the Skill *promises* one of the forbidden
+    # behaviours. Written in the affirmative so a negation ("never retries")
+    # is not mistaken for a promise.
     FORBIDDEN_PHRASES = (
-        "auto retry",
-        "auto-retry",
-        "automatically retry",
+        "will auto retry",
+        "will automatically retry",
+        "will retry automatically",
         "silently install",
         "force install",
     )
@@ -146,15 +178,33 @@ class SkillSafetyTests(unittest.TestCase):
 
     def test_export_skill_explicitly_disclaims_auto_retry(self) -> None:
         _, body = _parse_skill("codex-maya-export-preview")
-        self.assertIn("never retries", body.lower())
+        lowered = body.lower()
+        english = "never auto-retries" in lowered or "never retries" in lowered
+        chinese = "绝不自动重试" in body or "不要重试" in body
+        self.assertTrue(
+            english or chinese,
+            "export Skill must explicitly disclaim automatic retry (EN or ZH)",
+        )
 
     def test_diagnose_skill_explicitly_disclaims_installing(self) -> None:
         _, body = _parse_skill("codex-maya-diagnose")
-        self.assertIn("no `pip install`", body.lower())
+        lowered = body.lower()
+        english = "never installs" in lowered or "no `pip install`" in lowered
+        chinese = "禁止 `pip install`" in body or "不安装" in body
+        self.assertTrue(
+            english or chinese,
+            "diagnose Skill must explicitly disclaim installing packages (EN or ZH)",
+        )
 
     def test_inspect_skill_explicitly_disclaims_mutation(self) -> None:
         _, body = _parse_skill("codex-maya-inspect")
-        self.assertIn("no plug-in loading", body.lower())
+        lowered = body.lower()
+        english = "no plug-in loading" in lowered or "never loads plug-ins" in lowered
+        chinese = "不加载插件" in body or "不修改场景" in body
+        self.assertTrue(
+            english or chinese,
+            "inspect Skill must explicitly disclaim scene mutation (EN or ZH)",
+        )
 
 
 class SkillAntiRoutingTests(unittest.TestCase):
