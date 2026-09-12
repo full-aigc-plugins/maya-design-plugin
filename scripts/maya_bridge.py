@@ -226,6 +226,22 @@ def diagnostics_for(receipt: Mapping[str, Any]) -> dict:
 # ---------------------------------------------------------------------------
 
 
+# Scene-level state the Codex layer owns. Restoration is deliberately layered:
+#
+#   restored_maya_state (this module)      -- scene-level: renderer, image format,
+#     └─ jimeng playblast.run_playblast       resolution, playback range, and a
+#          └─ ViewportPreviewState            verification pass over everything
+#             (jimeng_third_party)            below.
+#                                           -- viewport-level: 29 model-editor
+#                                              flags plus selection and current
+#                                              time, restored by the vendored
+#                                              Jimeng implementation.
+#
+# The five fields that appear in both layers (selection, current_time, camera,
+# display_appearance, display_textures) are covered twice on purpose: the
+# inner layer is what actually puts them back, and the outer verification pass
+# is what lets `artifact_receipt.restoration_status` claim they were restored.
+# Without the outer pass there is no way to detect a silent restore failure.
 SNAPSHOT_FIELDS = (
     "selection",
     "current_time",
@@ -237,12 +253,15 @@ SNAPSHOT_FIELDS = (
     "renderer",
     "image_format",
     "resolution",
-    "shader_overrides",
 )
 
 
 def _read_snapshot(cmds: Any) -> dict:
-    """Capture every observable Maya value the Playblast path touches."""
+    """Capture every observable Maya value the Playblast path touches.
+
+    Only scene-level values are captured here; the viewport flags are owned by
+    the vendored Jimeng `ViewportPreviewState` (see the note above).
+    """
 
     return {
         "selection": list(cmds.ls(selection=True, long=True) or []),
@@ -251,17 +270,16 @@ def _read_snapshot(cmds: Any) -> dict:
             int(cmds.playbackOptions(query=True, minTime=True)),
             int(cmds.playbackOptions(query=True, maxTime=True)),
         ],
-        "camera": cmds.optionVar(query=" playbackOptions") if False else _active_camera(cmds),
+        "camera": _active_camera(cmds),
         "active_panel": _active_panel(cmds),
         "display_appearance": _panel_attribute(cmds, "displayAppearance"),
         "display_textures": _panel_attribute(cmds, "displayTextures"),
-        "renderer": cmds.optionVar(query="defaultRenderer") if False else _renderer(cmds),
+        "renderer": _renderer(cmds),
         "image_format": _image_format(cmds),
         "resolution": [
             int(cmds.getAttr("defaultResolution.width")),
             int(cmds.getAttr("defaultResolution.height")),
         ],
-        "shader_overrides": _shader_overrides(cmds),
     }
 
 
@@ -320,10 +338,6 @@ def _image_format(cmds: Any) -> str:
         return "png"
 
 
-def _shader_overrides(cmds: Any) -> dict:
-    return {}
-
-
 def _restore_snapshot(cmds: Any, snapshot: Mapping[str, Any]) -> None:
     """Restore every field we snapshotted. Failures are logged, not raised."""
 
@@ -371,8 +385,6 @@ def _restore_field(cmds: Any, name: str, value: Any) -> None:
     elif name == "resolution":
         cmds.setAttr("defaultResolution.width", int(value[0]))
         cmds.setAttr("defaultResolution.height", int(value[1]))
-    elif name == "shader_overrides":
-        return
 
 
 @contextlib.contextmanager

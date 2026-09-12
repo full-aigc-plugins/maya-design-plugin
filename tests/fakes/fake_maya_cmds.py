@@ -188,7 +188,6 @@ class FakePlayblastCmds(FakeCmds):
         self.display_textures: dict[str, bool] = {"modelPanel1": True}
         self.renderer: str = "vp2"
         self.image_format: str = "png"
-        self.shader_overrides: dict[str, str] = {}
         self.playblast_files: dict[str, bytes] = {}
         self.next_playblast_id = 0
         self.injected_failure: str | None = None
@@ -208,7 +207,6 @@ class FakePlayblastCmds(FakeCmds):
             "display_textures": dict(self.display_textures),
             "renderer": self.renderer,
             "image_format": self.image_format,
-            "shader_overrides": dict(self.shader_overrides),
             "resolution": list(self.resolution),
         }
 
@@ -222,7 +220,6 @@ class FakePlayblastCmds(FakeCmds):
         self.display_textures = dict(snapshot["display_textures"])
         self.renderer = snapshot["renderer"]
         self.image_format = snapshot["image_format"]
-        self.shader_overrides = dict(snapshot["shader_overrides"])
         self.resolution = tuple(snapshot["resolution"])
         self.restoration_calls.append("restored")
 
@@ -405,9 +402,6 @@ class FakePlayblastCmds(FakeCmds):
 
     def set_active_camera(self, camera: str) -> None:
         self.active_camera = camera
-
-    def override_shader(self, surface: str, shader: str) -> None:
-        self.shader_overrides[surface] = shader
 
     def inject_failure(self, stage: str | None) -> None:
         self.injected_failure = stage
