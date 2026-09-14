@@ -1,5 +1,7 @@
 # Codex Maya 插件
 
+![Codex × Maya — 用可审阅预览自动化场景](assets/maya-hero.png)
+
 <img src="assets/logo.png" alt="Codex Maya Logo" width="128">
 
 > 面向 Codex 的安全、可审查 Autodesk Maya 自动化兼容基础。

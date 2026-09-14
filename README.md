@@ -1,5 +1,7 @@
 # Codex Maya Plugin
 
+![Codex × Maya — Automate scenes with reviewable previews](assets/maya-hero.png)
+
 <img src="assets/logo.png" alt="Codex Maya logo" width="128">
 
 > Compatibility foundation for safe, reviewable Autodesk Maya automation in Codex.
