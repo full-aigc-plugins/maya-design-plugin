@@ -32,15 +32,37 @@ license: Apache-2.0 — see LICENSE
 
 ## Workflow
 
-Step 1 — 发现 Maya 运行时：调用 `scripts/maya_runner.py::discover_maya`，拿到 `mayapy` 路径、Maya 版本、Python ABI、模块路径。
+真正的入口只有一条命令。**不要**自己拼 `mayapy` 命令行、不要调 `maya_bridge` 的函数——它只在 Maya 内部有效。
 
-Step 2 — 读取场景回执：以 argv 方式驱动 `mayapy`，调用 `scripts/maya_bridge.py::inspect_scene(cmds, approved_scene)`。不要用 shell 字符串拼接。
+Step 1 — 运行检查（一条命令，driver 自己负责发现 Maya、argv 传参、超时与终止）：
 
-Step 3 — 校验回执：用 `schemas/scene_receipt.schema.json` 校验返回的 JSON，确认 `display_mode` 在枚举内、`frame_range.start <= end`。
+```bash
+python3 scripts/maya_runner.py inspect --scene <相对场景路径>
+```
 
-Step 4 — 输出：把回执写到 stdout。只有在用户明确要求时才写文件（`output_path`）。
+可选参数：`--explicit-root <Maya 安装根>`（Maya 不在标准位置时）、`--timeout <秒>`（默认 60）。
 
-Step 5 — 报告：向用户转述相机、帧范围、分辨率、材质数量、是否 degraded。
+Step 2 — 读取 stdout 上的 `scene_receipt` JSON。失败时 driver 以非零退出并把
+`{"code": ..., "message": ...}` 写到 stderr——**按 code 分支，不要解析自然语言**。
+
+Step 3 — 用 `schemas/scene_receipt.schema.json` 校验回执：`display_mode` 在枚举内、
+`frame_range.start <= end`、`resolution` 两项 ≥ 1。
+
+Step 4 — 报告：向用户转述相机、帧范围、分辨率、材质数量、是否 degraded。
+只有在用户明确要求时才把回执写文件。
+
+### 底层调用链（排障时才需要了解）
+
+```
+python3 scripts/maya_runner.py inspect --scene <path>     ← 你调用的
+  └─ maya_runner.discover_maya(...)                       ← 发现 mayapy
+  └─ maya_runner.run_request(...)                         ← argv 启动子进程
+       └─ mayapy scripts/maya_request.py <req> <resp>      ← Maya 内部入口
+            └─ maya_bridge.inspect_scene(maya.cmds, ...)   ← 只读桥
+```
+
+`scripts/maya_runner.py` 是宿主侧 driver，`scripts/maya_request.py` 是 Maya 内部 runner。
+`scripts/maya_bridge.py` 是纯库，直接运行它会以退出码 2 拒绝并提示正确的入口。
 
 ## Gotchas
 

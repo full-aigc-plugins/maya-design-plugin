@@ -168,10 +168,15 @@ class ArgvBuilderTests(unittest.TestCase):
             python_version="3.7",
             module_paths=(),
         )
-        argv = maya_runner.build_batch_argv(runtime, Path("/tmp/request.py"))
+        argv = maya_runner.build_batch_argv(runtime, Path("/tmp/request.json"))
         self.assertIsInstance(argv, list)
-        self.assertEqual(argv, ["/opt/maya/bin/mayapy", "/tmp/request.py"])
-        self.assertEqual(len(argv), 2)
+        # mayapy <runner> <request.json> <response.json>: four discrete
+        # elements so paths never need quoting or escaping.
+        self.assertEqual(argv[0], "/opt/maya/bin/mayapy")
+        self.assertEqual(argv[1], str(maya_runner.RUNNER_SCRIPT))
+        self.assertEqual(argv[2], "/tmp/request.json")
+        self.assertTrue(argv[3].endswith("response.json"))
+        self.assertEqual(len(argv), 4)
 
 
 class SubprocessHardeningTests(unittest.TestCase):

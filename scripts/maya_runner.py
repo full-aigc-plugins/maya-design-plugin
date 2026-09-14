@@ -1,13 +1,21 @@
-"""Discover a user-installed Maya runtime without modifying it.
+"""Discover a Maya runtime and drive one request through it.
 
-This module is the only path through which `codex-maya` reaches the Maya binary.
-It must:
+This module is the only path through which `codex-maya` reaches the Maya
+binary. It has two halves:
+
+* **discovery** -- ``discover_maya`` locates ``mayapy`` and reports the Maya
+  version, Python ABI, and module paths.
+* **execution** -- ``run_request`` launches ``mayapy`` against
+  ``maya_request.py`` for a single request and returns the parsed response.
+
+Both halves must:
 
 * use argv arrays and never shell strings,
-* read version metadata through `mayapy -c "import sys; print(sys.version_info[:2])"`,
+* pass an allowlisted environment,
+* bound the child with a timeout and terminate it when the timeout expires,
 * never install, copy, or mutate Maya on disk,
 * raise stable errors so the Skills can map them to `MAYA_NOT_FOUND`,
-  `ABI_MISMATCH`, or `MODULE_LOAD_FAILED`.
+  `ABI_MISMATCH`, `MODULE_LOAD_FAILED`, or `TIMEOUT`.
 """
 
 from __future__ import annotations
@@ -17,8 +25,11 @@ import dataclasses
 import json
 import os
 import re
+import signal
 import subprocess
 import sys
+import tempfile
+import time
 from pathlib import Path
 from typing import Iterable, Mapping, Sequence
 
@@ -63,6 +74,27 @@ class MayaAbiMismatchError(MayaProbeError):
 
 class MayaModuleLoadError(MayaProbeError):
     code = "MODULE_LOAD_FAILED"
+
+
+class MayaRequestError(Exception):
+    """A request ran inside mayapy and came back as a structured failure.
+
+    ``code`` carries the stable error code the in-Maya runner reported, so the
+    Skills can branch on it without parsing prose.
+    """
+
+    def __init__(self, code: str, message: str, *, detail: str = "") -> None:
+        super().__init__(message)
+        self.code = code
+        self.detail = detail
+
+
+class MayaTimeoutError(MayaRequestError):
+    code = "TIMEOUT"
+
+
+class MayaCrashError(MayaRequestError):
+    code = "MAYA_REQUEST_CRASHED"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -269,41 +301,275 @@ def discover_maya(
     raise MayaNotFoundError("no mayapy executable matched the candidate layouts")
 
 
-def build_batch_argv(runtime: MayaRuntime, request_path: Path) -> list[str]:
-    """Return the argv used to drive `mayapy` for a single inspection request."""
+RUNNER_SCRIPT = Path(__file__).resolve().parent / "maya_request.py"
+RESPONSE_FILENAME = "response.json"
+REQUEST_FILENAME = "request.json"
+# Grace period between SIGTERM and SIGKILL when a request times out.
+TERMINATION_GRACE_SECONDS = 5.0
+
+
+def build_batch_argv(
+    runtime: MayaRuntime,
+    request_path: Path,
+    response_path: Path | None = None,
+    runner_script: Path | None = None,
+) -> list[str]:
+    """Return the argv that drives `mayapy` for one request.
+
+    The shape is ``[mayapy, runner_script, request.json, response.json]``: an
+    argv array with no shell string anywhere. ``request_path`` and
+    ``response_path`` are passed through as separate elements, so paths
+    containing spaces or non-ASCII characters survive untouched.
+    """
 
     if not request_path.is_absolute():
         request_path = request_path.resolve()
-    return [str(runtime.mayapy), str(request_path)]
+    if response_path is None:
+        response_path = request_path.parent / RESPONSE_FILENAME
+    if not response_path.is_absolute():
+        response_path = response_path.resolve()
+    if runner_script is None:
+        runner_script = RUNNER_SCRIPT
+    return [
+        str(runtime.mayapy),
+        str(runner_script),
+        str(request_path),
+        str(response_path),
+    ]
+
+
+def _terminate_process(process: subprocess.Popen, grace: float = TERMINATION_GRACE_SECONDS) -> None:
+    """Terminate the child and its process group, escalating to SIGKILL.
+
+    Maya may spawn helper processes, so we signal the whole group. The child is
+    started with ``start_new_session=True`` (POSIX) so its group id equals its
+    pid and we cannot accidentally signal our own group.
+    """
+
+    if process.poll() is not None:
+        return
+
+    try:
+        if os.name == "posix":
+            os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+        else:  # pragma: no cover - Windows path
+            process.terminate()
+    except (ProcessLookupError, PermissionError, OSError):
+        pass
+
+    deadline = time.monotonic() + grace
+    while time.monotonic() < deadline:
+        if process.poll() is not None:
+            return
+        time.sleep(0.05)
+
+    try:
+        if os.name == "posix":
+            os.killpg(os.getpgid(process.pid), signal.SIGKILL)
+        else:  # pragma: no cover - Windows path
+            process.kill()
+    except (ProcessLookupError, PermissionError, OSError):
+        pass
+
+    try:
+        process.wait(timeout=grace)
+    except subprocess.TimeoutExpired:  # pragma: no cover - defensive
+        pass
+
+
+def _read_response(response_path: Path) -> dict | None:
+    """Read the in-Maya response envelope, or None if it was never written."""
+
+    if not response_path.is_file():
+        return None
+    try:
+        payload = json.loads(response_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return payload if isinstance(payload, dict) else None
+
+
+def run_request(
+    runtime: MayaRuntime,
+    request: Mapping[str, object],
+    *,
+    timeout: float = DEFAULT_TIMEOUT_SECONDS,
+    env: Mapping[str, str] | None = None,
+    runner_script: Path | None = None,
+    workdir: Path | None = None,
+) -> dict:
+    """Run one request inside `mayapy` and return the parsed response.
+
+    Returns the ``result`` payload on success. Raises:
+
+    * :class:`MayaTimeoutError` (code ``TIMEOUT``) when the child outlives
+      ``timeout`` -- the child and its process group are terminated first.
+    * :class:`MayaRequestError` carrying the in-Maya error code when the runner
+      reported a structured failure (for example ``PLAYBLAST_FAILED``).
+    * :class:`MayaCrashError` when the child died without writing a response.
+    """
+
+    filtered_env = _filter_environment(env if env is not None else os.environ)
+
+    with tempfile.TemporaryDirectory(prefix="codex-maya-") as tmp:
+        tmp_path = Path(tmp)
+        request_path = tmp_path / REQUEST_FILENAME
+        response_path = tmp_path / RESPONSE_FILENAME
+        request_path.write_text(
+            json.dumps(request, ensure_ascii=False), encoding="utf-8"
+        )
+
+        argv = build_batch_argv(runtime, request_path, response_path, runner_script)
+
+        # start_new_session puts the child in its own process group so a
+        # timeout can signal the whole tree without touching ours.
+        popen_kwargs: dict = {
+            "args": argv,
+            "env": filtered_env,
+            "shell": False,
+            "cwd": str(workdir or tmp_path),
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.PIPE,
+        }
+        if os.name == "posix":
+            popen_kwargs["start_new_session"] = True
+
+        process = subprocess.Popen(**popen_kwargs)
+        try:
+            stdout, stderr = process.communicate(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            _terminate_process(process)
+            try:
+                stdout, stderr = process.communicate(timeout=TERMINATION_GRACE_SECONDS)
+            except subprocess.TimeoutExpired:  # pragma: no cover - defensive
+                stdout, stderr = b"", b""
+            raise MayaTimeoutError(
+                "TIMEOUT",
+                f"mayapy request exceeded {timeout:g}s and was terminated",
+            ) from None
+
+        payload = _read_response(response_path)
+
+    stderr_text = (stderr or b"").decode("utf-8", "replace").strip()
+
+    if payload is None:
+        raise MayaCrashError(
+            "MAYA_REQUEST_CRASHED",
+            "mayapy exited without writing a response file",
+            detail=(stderr_text or (stdout or b"").decode("utf-8", "replace").strip())[-2000:],
+        )
+
+    if payload.get("status") == "ok":
+        result = payload.get("result")
+        return result if isinstance(result, dict) else {}
+
+    raise MayaRequestError(
+        str(payload.get("code") or "MAYA_REQUEST_FAILED"),
+        str(payload.get("message") or "the request failed inside mayapy"),
+        detail=str(payload.get("traceback") or "")[-2000:],
+    )
+
+
+def _emit(payload: Mapping[str, object], *, failed: bool = False) -> None:
+    stream = sys.stderr if failed else sys.stdout
+    print(json.dumps(payload, ensure_ascii=False, sort_keys=True), file=stream)
 
 
 def _cli(argv: Sequence[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="codex-maya-runner")
+    parser = argparse.ArgumentParser(
+        prog="codex-maya-runner",
+        description="Discover a Maya runtime and drive one request through it.",
+    )
     sub = parser.add_subparsers(dest="command", required=True)
+
     discover = sub.add_parser("discover", help="Discover a Maya runtime")
     discover.add_argument("--explicit-root", default=None)
     discover.add_argument("--search-path", default="")
+
+    def add_runtime_args(target: argparse.ArgumentParser) -> None:
+        target.add_argument("--explicit-root", default=None)
+        target.add_argument("--search-path", default="")
+        target.add_argument("--timeout", type=float, default=DEFAULT_TIMEOUT_SECONDS)
+
+    inspect_cmd = sub.add_parser(
+        "inspect", help="Read-only scene inspection inside mayapy"
+    )
+    inspect_cmd.add_argument("--scene", required=True, help="Authorized scene path")
+    add_runtime_args(inspect_cmd)
+
+    export_cmd = sub.add_parser(
+        "export", help="Reversible Playblast export inside mayapy"
+    )
+    export_cmd.add_argument(
+        "--request",
+        required=True,
+        help="Path to a JSON file holding the export request object",
+    )
+    add_runtime_args(export_cmd)
+
+    flow_cmd = sub.add_parser(
+        "jimeng-flow", help="Official Jimeng flow plus an ephemeral link"
+    )
+    flow_cmd.add_argument(
+        "--request",
+        required=True,
+        help="Path to a JSON file holding the flow request object",
+    )
+    add_runtime_args(flow_cmd)
+
     args = parser.parse_args(argv)
 
     if args.command == "discover":
         try:
             runtime = discover_maya(args.explicit_root, args.search_path)
         except MayaProbeError as exc:
-            print(json.dumps({"code": exc.code, "message": str(exc)}), file=sys.stderr)
+            _emit({"code": exc.code, "message": str(exc)}, failed=True)
             return 1
-        print(
-            json.dumps(
-                {
-                    "maya": str(runtime.maya) if runtime.maya else None,
-                    "mayapy": str(runtime.mayapy),
-                    "version": runtime.version,
-                    "python_version": runtime.python_version,
-                    "module_paths": [str(p) for p in runtime.module_paths],
-                }
-            )
+        _emit(
+            {
+                "maya": str(runtime.maya) if runtime.maya else None,
+                "mayapy": str(runtime.mayapy),
+                "version": runtime.version,
+                "python_version": runtime.python_version,
+                "module_paths": [str(p) for p in runtime.module_paths],
+            }
         )
         return 0
-    return 2
+
+    if args.command in ("export", "jimeng-flow"):
+        try:
+            request = json.loads(Path(args.request).read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            _emit({"code": "MAYA_REQUEST_FAILED", "message": str(exc)}, failed=True)
+            return 1
+        if not isinstance(request, dict):
+            _emit(
+                {"code": "MAYA_REQUEST_FAILED", "message": "request must be a JSON object"},
+                failed=True,
+            )
+            return 1
+        action = "export" if args.command == "export" else "jimeng_flow"
+        payload: Mapping[str, object] = {"action": action, "request": request}
+    else:
+        payload = {"action": "inspect", "scene_path": args.scene}
+
+    try:
+        runtime = discover_maya(args.explicit_root, args.search_path)
+    except MayaProbeError as exc:
+        _emit({"code": exc.code, "message": str(exc)}, failed=True)
+        return 1
+
+    try:
+        result = run_request(runtime, payload, timeout=args.timeout)
+    except MayaRequestError as exc:
+        _emit(
+            {"code": exc.code, "message": str(exc), "detail": exc.detail},
+            failed=True,
+        )
+        return 1
+
+    _emit(result)
+    return 0
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -318,13 +584,21 @@ def _iter_module_paths(paths: Iterable[Path]) -> list[str]:
 __all__ = [
     "ALLOWED_ENV_VARS",
     "DEFAULT_TIMEOUT_SECONDS",
+    "REQUEST_FILENAME",
+    "RESPONSE_FILENAME",
+    "RUNNER_SCRIPT",
+    "TERMINATION_GRACE_SECONDS",
     "MayaAbiMismatchError",
+    "MayaCrashError",
     "MayaModuleLoadError",
     "MayaNotFoundError",
     "MayaProbeError",
+    "MayaRequestError",
     "MayaRuntime",
+    "MayaTimeoutError",
     "build_batch_argv",
     "discover_maya",
+    "run_request",
 ]
 
 

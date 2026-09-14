@@ -693,14 +693,19 @@ __all__ = [
 ]
 
 
-if __name__ == "__main__":  # pragma: no cover - exercised via tests and Skills
-    import argparse
-
-    parser = argparse.ArgumentParser(description="Inspect an authorized Maya scene")
-    parser.add_argument("scene", type=Path)
-    parser.add_argument("--bridge-script", type=Path, default=None)
-    args = parser.parse_args()
-    # Real Maya invocation is owned by Skills; this entrypoint exists only for
-    # CLI discoverability.
-    print(json.dumps({"hint": "use the Skills; this CLI is intentionally a stub"}))
-    sys.exit(0)
+if __name__ == "__main__":  # pragma: no cover - exercised via maya_request.py
+    # This module is a library: every public function takes a live
+    # ``maya.cmds`` as its first argument, so there is nothing useful it can do
+    # under a host interpreter. Rather than pretend to work, point the caller
+    # at the real entrypoints.
+    sys.stderr.write(
+        "maya_bridge is a library and must run inside mayapy.\n"
+        "\n"
+        "Use the host-side driver instead:\n"
+        "  python3 scripts/maya_runner.py inspect --scene <path>\n"
+        "  python3 scripts/maya_runner.py export  --request <request.json>\n"
+        "  python3 scripts/maya_runner.py jimeng-flow --request <request.json>\n"
+        "\n"
+        "Inside mayapy, scripts/maya_request.py is the entrypoint.\n"
+    )
+    raise SystemExit(2)

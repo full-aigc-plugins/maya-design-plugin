@@ -36,18 +36,55 @@ license: Apache-2.0 — see LICENSE
 
 ## Workflow
 
-Step 1 — 确认模式：`white_model` / `material_preview` / `existing_video`。模式决定了后续所有分支。
+真正的入口只有一条命令。**不要**自己拼 `mayapy` 命令行、不要从宿主直接调 `maya_bridge` 的函数——它只在 Maya 内部有效。
 
-Step 2 — 发现 Maya（`existing_video` 模式跳过）：调用 `scripts/maya_runner.py::discover_maya`。
+Step 1 — 确认模式：`white_model` / `material_preview` / `existing_video`，然后写一个 request JSON。
 
-Step 3 — 恢复性导出：在 `scripts/maya_bridge.py::restored_maya_state` 上下文内调用即梦的 `playblast.run_playblast(...)`，随后调用 `upload_bridge.start_local_bridge(...)` 启动本地网桥。
+Step 2 — 运行导出（driver 自己负责发现 Maya、argv 传参、超时与终止）：
 
-Step 4 — 组装响应：从产物文件生成 token-free `artifact_receipt`，并把当前可用的
-`redirect_url` 放进独立的 `jimeng_link`；只有 `authorize_upload=true` 才能启动网桥。
+```bash
+# 需要即梦链接时用 jimeng-flow（必须显式授权）
+python3 scripts/maya_runner.py jimeng-flow --request <request.json>
 
-Step 5 — 校验媒体：用 `scripts/media_probe.py::validate_receipt` 重新探测产物并比对 SHA-256。
+# 只要本地产物与回执时用 export
+python3 scripts/maya_runner.py export --request <request.json>
+```
 
-Step 6 — 报告：向用户给出媒体信息、还原状态和本次授权生成的即梦链接。
+request JSON 形如：
+
+```json
+{"mode": "white_model", "camera": "camera1",
+ "start_frame": 1, "end_frame": 120, "frame_rate": 24,
+ "scene_id": "<上一步 inspect 的 scene_id>",
+ "authorize_upload": true}
+```
+
+`existing_video` 模式把 `video_path` 换成已渲染的本地文件，其余字段不变。
+
+Step 3 — 读取 stdout：`{"artifact_receipt": {...}, "jimeng_link": {...}}`。
+`artifact_receipt` **不含** token；`jimeng_link` 只在本次进程内有效。
+失败时 driver 以非零退出并把 `{"code": ..., "message": ...}` 写到 stderr——**按 code 分支，不要解析自然语言**。
+
+Step 4 — 用 `scripts/media_probe.py::validate_receipt` 复核产物的 SHA-256 与编码参数。
+
+Step 5 — 报告：媒体路径、时长、大小、还原状态，以及（若已授权）即梦链接。
+链接有时效（默认 30 分钟），过期后需重新运行一次导出，**不要**尝试延长已有 token。
+
+### 底层调用链（排障时才需要了解）
+
+```
+python3 scripts/maya_runner.py jimeng-flow --request <req.json>   ← 你调用的
+  └─ maya_runner.discover_maya(...)                               ← 发现 mayapy
+  └─ maya_runner.run_request(...)                                 ← argv 启动子进程
+       └─ mayapy scripts/maya_request.py <req> <resp>             ← Maya 内部入口
+            └─ maya_bridge.run_jimeng_flow(maya.cmds, ...)        ← 授权 + 编排
+                 └─ restored_maya_state(...)                      ← 外层快照/校验
+                      └─ 即梦 playblast.run_playblast(...)        ← 内层还原
+                      └─ 即梦 upload_bridge.start_local_bridge()  ← 本地网桥
+```
+
+`scripts/maya_runner.py` 是宿主侧 driver，`scripts/maya_request.py` 是 Maya 内部 runner。
+`scripts/maya_bridge.py` 是纯库，直接运行它会以退出码 2 拒绝并提示正确的入口。
 
 ## Gotchas
 

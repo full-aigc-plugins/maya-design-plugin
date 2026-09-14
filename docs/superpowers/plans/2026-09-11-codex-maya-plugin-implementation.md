@@ -186,10 +186,32 @@ runtime_matrix = observed evidence or explicit blocker
 | Existing-video Jimeng link response | Complete offline | official `start_local_bridge`, conversion-path tests |
 | Explicit upload authorization | Complete offline | `UPLOAD_NOT_AUTHORIZED` regression test |
 | Four Agent Skills and distribution surface | Complete offline | `6cf7941`, `820c0a8`, Skill tests |
+| Real CLI install round trip | Complete | `codex plugin add codex-maya@partme-ai-maya` installed 0.1.0; `codex debug prompt-input` lists all four Skills |
 | Real Maya UI/Playblast runtime | Blocked | No authorized Maya/mayapy installation found |
-| Executable Codex-to-Maya driver | Not complete | `maya_bridge.py` CLI remains a discoverability stub |
+| Executable Codex-to-Maya driver | **Complete offline** | `scripts/maya_request.py` + `maya_runner.run_request`; `tests/test_maya_driver.py` (22 tests, mutation-verified) |
+
+### Driver implementation notes (2026-09-12)
+
+The driver is split so that only Maya-facing code has to run under Python 3.7:
+
+| Piece | Runs on | Responsibility |
+|---|---|---|
+| `scripts/maya_runner.py` | host (`python3`) | discovery, argv construction, subprocess launch, timeout, termination, response parsing, error-code mapping, CLI |
+| `scripts/maya_request.py` | inside `mayapy` (Python 3.7) | read request JSON, import the real `maya.cmds`, dispatch to the bridge, always write a response envelope |
+| `scripts/maya_bridge.py` | inside `mayapy` | library only; taking a live `cmds` is why it has no standalone entrypoint |
+
+Invocation is `mayapy <maya_request.py> <request.json> <response.json>` -- four discrete argv
+elements, so paths with spaces or non-ASCII characters need no quoting.
+
+Failure handling: the child is started in its own process group; on timeout the group is
+signalled `SIGTERM`, then `SIGKILL` after a grace period, and the host raises `TIMEOUT`.
+A child that dies without writing a response raises `MAYA_REQUEST_CRASHED` carrying stderr
+rather than being mistaken for success. Error codes raised inside Maya (`SCENE_NOT_AUTHORIZED`,
+`PLAYBLAST_FAILED`, `RESTORE_UNCONFIRMED`, ...) cross the boundary verbatim.
+
+### Remaining runtime phase
 
 The next runtime phase must use an authorized Maya 2022+ installation and a fixture with a
 visible model panel. It must not infer Playblast support from fake `maya.cmds` or mayapy-only
-tests. After the runtime path is selected, add a real request driver and record exact Maya,
-Python ABI, OS, inspection, Playblast, restoration, bridge, and link evidence.
+tests. The driver now exists, so that phase only has to supply the real Maya install and record
+exact Maya, Python ABI, OS, inspection, Playblast, restoration, bridge, and link evidence.

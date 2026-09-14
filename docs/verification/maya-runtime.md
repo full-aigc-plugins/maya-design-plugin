@@ -9,7 +9,14 @@ available.
 ## Status (2026-09-12)
 
 **Blocked** — no Maya runtime has been authorized for this workspace yet.
-The CI image used to author the plugin ships `mayapy` is not installed.
+`mayapy` is not installed (verified: no `/Applications/Autodesk`, no
+`maya`/`mayapy` on `PATH`, `MAYA_LOCATION` unset).
+
+The **driver is no longer part of this blocker.** It is implemented and
+covered by `tests/test_maya_driver.py`, which runs the real
+`scripts/maya_request.py` against a real `subprocess` boundary with only
+`maya.cmds` faked. See the "Driver status" section below for what that does
+and does not prove.
 
 ### Required evidence to unblock
 
@@ -20,6 +27,32 @@ The CI image used to author the plugin ships `mayapy` is not installed.
   material to exercise the material-preview path.
 - Permission to invoke `mayapy` from the harness subprocess (no shell
   strings, argv only).
+
+## Driver status (2026-09-12)
+
+`python3 scripts/maya_runner.py <inspect|export|jimeng-flow> ...` is the
+supported entrypoint. It discovers Maya, launches `mayapy` with an argv array
+and an allowlisted environment, bounds the child with a timeout, terminates it
+on expiry, and maps failures to stable error codes.
+
+### What the offline driver tests do prove
+
+| Property | Evidence |
+|---|---|
+| Request/response file protocol round trip | `InspectRoundTripTests` runs the real runner end to end |
+| A real receipt comes back over the boundary | `test_inspect_with_seeded_scene_returns_receipt_fields` |
+| In-Maya error codes survive verbatim | `ErrorCodePropagationTests` (`PLAYBLAST_FAILED`, `RESTORE_UNCONFIRMED`) |
+| Timeout terminates the child | `TimeoutAndTerminationTests` asserts the recorded child pid is gone |
+| A silent death is a crash, not a success | `CrashHandlingTests` (non-zero exit, corrupt response) |
+| Only allowlisted env reaches the child | `EnvironmentIsolationTests` pins the exact `PATH` value the child sees |
+| The runner stays Python 3.7-compatible | `MayaRequestModuleTests` (no walrus, lazy `maya.cmds`) |
+
+### What it still does NOT prove
+
+`maya.cmds` is faked. Nothing here demonstrates that Maya accepts the
+Playblast arguments, that `ViewportPreviewState` restores a real scene, or
+that the vendored ffmpeg conversion produces a playable H.264 file. Those
+remain in the runtime matrix above and require the real install.
 
 ### What we expect to record once unblocked
 
