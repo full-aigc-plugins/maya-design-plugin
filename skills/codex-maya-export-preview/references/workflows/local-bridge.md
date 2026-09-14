@@ -27,7 +27,8 @@
 
 处理方式：`maya_bridge._record_bridge_session()` 把完整网桥响应写入
 `sys.modules` 下的进程内日志。`mayapy` 子进程退出即消失，不落盘。
-需要打开链接时用 `consume_bridge_session_log()` 取出并清空。
+稳定 `artifact_receipt` 继续排除链接字段；授权调用使用 `run_jimeng_flow()`，在独立
+`jimeng_link` 响应块中立即返回 `redirect_url`。不得依赖 mayapy 退出即消失的进程日志。
 
 ## CORS 白名单
 

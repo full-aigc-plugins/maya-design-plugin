@@ -20,6 +20,7 @@ Codex 侧的显式 `mode` 参数**优先**于自动检测。用户说「要白�
 
 ## existing_video 的边界
 
-`existing_video` 只做三件事：校验文件存在、计算 SHA-256、拼装回执。
+`existing_video` 校验文件后调用官方 `upload_bridge.start_local_bridge()`；非 MP4 输入由
+官方 ffmpeg 路径转换。Codex 对桥接实际服务的文件计算 SHA-256、拼装回执，并单独返回链接。
 它**不调用 ffmpeg**（`.mp4` 直接登记；非 `.mp4` 由即梦的
 `mp4_upload_path` 处理——但那属于导出路径，不在本模式的 Codex 契约里）。

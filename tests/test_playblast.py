@@ -145,6 +145,7 @@ class _JimengStub:
             "resource_info_url": "http://127.0.0.1:38123/resouce_info?token=SECRET",
             "video": str(video_path),
         }
+        self.bridge_calls = []
 
     def active_camera(self):  # noqa: D401
         return self.fake.active_camera
@@ -157,12 +158,13 @@ class _JimengStub:
         return str(self.video_path)
 
     def start_local_bridge(self, **kwargs):  # noqa: D401
+        self.bridge_calls.append(dict(kwargs))
         if self.fake.injected_failure == "bridge":
             raise RuntimeError("injected bridge failure")
         return dict(self.bridge_result)
 
 
-def _install_jimeng_stub(fake: FakePlayblastCmds, video_path: Path) -> None:
+def _install_jimeng_stub(fake: FakePlayblastCmds, video_path: Path) -> _JimengStub:
     """Patch the lazy import helpers to return a stub Jimeng module."""
 
     stub = _JimengStub(fake, video_path)
@@ -180,6 +182,7 @@ def _install_jimeng_stub(fake: FakePlayblastCmds, video_path: Path) -> None:
     maya_bridge._import_jimeng_playblast = lambda: pb_module  # type: ignore[assignment]
     maya_bridge._import_jimeng_upload_bridge = lambda: ub_module  # type: ignore[assignment]
     sys.modules.pop("_codex_maya_bridge_sessions", None)
+    return stub
 
 
 def _base_request(scene_id: str, **overrides) -> dict:
@@ -204,7 +207,7 @@ class ExportPlayblastTests(unittest.TestCase):
         self.tmpdir = ROOT / "tests" / "tmp_playblast"
         self.tmpdir.mkdir(exist_ok=True)
         self.video_path = self.tmpdir / "fake.mp4"
-        _install_jimeng_stub(self.fake, self.video_path)
+        self.stub = _install_jimeng_stub(self.fake, self.video_path)
 
     def tearDown(self) -> None:
         uninstall_fake()
@@ -285,6 +288,73 @@ class ExportPlayblastTests(unittest.TestCase):
                     camera="does_not_exist",
                 ),
             )
+
+    def test_camera_flow_returns_link_separately_from_artifact_receipt(self) -> None:
+        result = maya_bridge.run_jimeng_flow(
+            self.fake,
+            _base_request(
+                "11111111-1111-4111-8111-111111111111",
+                authorize_upload=True,
+            ),
+        )
+
+        self.assertEqual(result["artifact_receipt"]["display_mode"], "white_model")
+        self.assertNotIn("redirect_url", result["artifact_receipt"])
+        self.assertEqual(result["jimeng_link"]["status"], "ready")
+        self.assertIn("channel=maya", result["jimeng_link"]["redirect_url"])
+
+    def test_existing_video_flow_calls_official_bridge_and_returns_link(self) -> None:
+        local = self.tmpdir / "existing.mp4"
+        local.write_bytes(b"existing-video")
+        self.stub.bridge_result["video"] = str(local)
+        try:
+            result = maya_bridge.run_jimeng_flow(
+                self.fake,
+                _base_request(
+                    "11111111-1111-4111-8111-111111111111",
+                    mode="existing_video",
+                    video_path=str(local),
+                    authorize_upload=True,
+                    prompt="产品动画",
+                ),
+            )
+        finally:
+            local.unlink()
+
+        self.assertEqual(len(self.stub.bridge_calls), 1)
+        self.assertEqual(self.stub.bridge_calls[0]["video_path"], str(local))
+        self.assertEqual(self.stub.bridge_calls[0]["prompt"], "产品动画")
+        self.assertEqual(result["jimeng_link"]["status"], "ready")
+        self.assertEqual(result["artifact_receipt"]["display_mode"], "existing_video")
+
+    def test_existing_video_artifact_tracks_the_file_served_by_official_bridge(self) -> None:
+        source = self.tmpdir / "source.mov"
+        source.write_bytes(b"source-video")
+        self.video_path.write_bytes(b"converted-mp4")
+        try:
+            result = maya_bridge.run_jimeng_flow(
+                self.fake,
+                _base_request(
+                    "11111111-1111-4111-8111-111111111111",
+                    mode="existing_video",
+                    video_path=str(source),
+                    authorize_upload=True,
+                ),
+            )
+        finally:
+            source.unlink()
+
+        artifact = result["artifact_receipt"]
+        self.assertEqual(artifact["media_path"], str(self.video_path))
+        self.assertEqual(artifact["media_sha256"], maya_bridge._sha256_file(self.video_path))
+
+    def test_link_flow_requires_explicit_upload_authorization(self) -> None:
+        with self.assertRaises(maya_bridge.UploadNotAuthorizedError):
+            maya_bridge.run_jimeng_flow(
+                self.fake,
+                _base_request("11111111-1111-4111-8111-111111111111"),
+            )
+        self.assertEqual(self.stub.bridge_calls, [])
 
 
 class ExistingVideoReceiptTests(unittest.TestCase):

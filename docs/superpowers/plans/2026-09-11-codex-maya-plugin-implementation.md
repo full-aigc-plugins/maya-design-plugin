@@ -1,5 +1,10 @@
 # Codex Maya Plugin Implementation Plan
 
+> **Revision 2 status (2026-09-12):** Tasks 1-7 below are historical execution instructions.
+> The authoritative completion ledger is appended at the end. The reuse-based revision adds
+> direct Jimeng-link return for both official flows without placing temporary tokens in the
+> stable artifact receipt.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Build reversible Maya scene inspection and preview export workflows for Codex.
@@ -168,3 +173,23 @@ plugin_validation = PASS
 secret_matches = 0
 runtime_matrix = observed evidence or explicit blocker
 ```
+
+## Revision 2 completion ledger (authoritative)
+
+| Outcome | Status | Evidence |
+|---|---|---|
+| Manifest, schemas and distribution contracts | Complete | `07597d7`, `6b9bb2c`, contract tests |
+| Maya/mayapy discovery and diagnostics | Complete offline | `f1db41c`, runner/diagnostic tests |
+| Read-only scene inspection | Complete offline | `08bebda`, inspection tests |
+| Official source reuse and integrity guard | Complete | `f6e8a21`, byte parity and checksum tests |
+| Camera Playblast plus Jimeng link response | Complete offline | `run_jimeng_flow`, Playblast/link tests |
+| Existing-video Jimeng link response | Complete offline | official `start_local_bridge`, conversion-path tests |
+| Explicit upload authorization | Complete offline | `UPLOAD_NOT_AUTHORIZED` regression test |
+| Four Agent Skills and distribution surface | Complete offline | `6cf7941`, `820c0a8`, Skill tests |
+| Real Maya UI/Playblast runtime | Blocked | No authorized Maya/mayapy installation found |
+| Executable Codex-to-Maya driver | Not complete | `maya_bridge.py` CLI remains a discoverability stub |
+
+The next runtime phase must use an authorized Maya 2022+ installation and a fixture with a
+visible model panel. It must not infer Playblast support from fake `maya.cmds` or mayapy-only
+tests. After the runtime path is selected, add a real request driver and record exact Maya,
+Python ABI, OS, inspection, Playblast, restoration, bridge, and link evidence.

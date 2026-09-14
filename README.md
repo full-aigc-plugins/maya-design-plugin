@@ -8,11 +8,15 @@
 
 ## Status
 
-The compatibility plugin foundation is now present: manifest, marketplace metadata, brand assets, legal documents, validation script, tests, and implementation directories. Maya workflows and runtime compatibility remain unimplemented and unverified.
+The repository now has an offline function-level integration that reuses the official Jimeng
+Maya Playblast, ffmpeg, and loopback-bridge modules for both camera and existing-video links.
+The executable real-Maya driver and runtime compatibility are not yet verified.
 
 ## Purpose
 
-`codex-maya` will inspect authorized Maya scenes, select cameras and timeline ranges, create white-model or material-aware Playblast previews, validate local media, and restore temporary scene state. It never uploads to Dreamina; `codex-dreamina-3d` owns that orchestration.
+`codex-maya` inspects authorized Maya scenes, creates reversible previews, and returns an
+ephemeral Jimeng link after explicit upload authorization. Stable artifact receipts remain
+free of local-bridge tokens.
 
 ```text
 Codex -> guarded Maya runner -> mayapy / Maya batch -> Playblast -> validation -> artifact receipt
@@ -24,10 +28,11 @@ Codex -> guarded Maya runner -> mayapy / Maya batch -> Playblast -> validation -
 - Use argv-based subprocess calls and explicit project/output scopes.
 - Diagnose Chinese-path and `ModuleNotFoundError` failures without installing packages.
 - Restore model panels, selection, timeline, render globals, and temporary overrides.
-- Do not bundle Maya, codecs, vendor uploader source, or credentials.
+- Do not bundle Maya, codecs, or credentials; vendor Python source is checksummed verbatim.
 
 ## Documents
 
+- [Chinese installation, authorization, and usage guide](docs/getting-started.zh-CN.md)
 - [Architecture](docs/Codex-Maya-Plugin-Architecture.md) / [中文](docs/Codex-Maya-Plugin-Architecture.zh_CN.md)
 - [Technical solution](docs/Codex-Maya-Plugin-Technical-Solution.md) / [中文](docs/Codex-Maya-Plugin-Technical-Solution.zh_CN.md)
 - [Design spec](docs/superpowers/specs/2026-09-11-codex-maya-plugin-design.md)

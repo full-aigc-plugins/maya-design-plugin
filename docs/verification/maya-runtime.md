@@ -44,7 +44,6 @@ blocker record.
 - Linux Maya installs without an explicit `MAYA_LOCATION` (the probe
   intentionally does not walk `/usr/bin/mayapy` blindly).
 - Bundled Maya, codecs, or ffmpeg — the plugin never ships them.
-- Authorized uploads to Dreamina — that is `codex-dreamina-3d`'s
-  responsibility. The Codex Maya wrapper captures the local-bridge
-  response in a process-local log and never embeds the redirect URL in
-  the artifact contract.
+- Paid generation and browser/account automation. `codex-maya` now returns an authorized,
+  ephemeral Jimeng link separately from the token-free artifact contract; the user remains
+  responsible for opening the page, logging in, and confirming generation.
