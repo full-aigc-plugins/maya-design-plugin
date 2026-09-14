@@ -57,6 +57,10 @@ class RestoreUnconfirmedError(Exception):
     code = "RESTORE_UNCONFIRMED"
 
 
+class UploadNotAuthorizedError(Exception):
+    code = "UPLOAD_NOT_AUTHORIZED"
+
+
 TimeoutError = TimeoutError_  # alias for callers
 
 
@@ -454,10 +458,12 @@ def _sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
-def _existing_video_receipt(request: Mapping[str, Any]) -> dict:
+def _existing_video_receipt(
+    request: Mapping[str, Any], media_path: str | Path | None = None
+) -> dict:
     """Build a receipt for the `existing_video` mode — no scene mutation."""
 
-    video_path = Path(str(request["video_path"]))
+    video_path = Path(str(media_path or request["video_path"]))
     if not video_path.is_file():
         raise SceneNotAuthorizedError(f"video_path not found: {video_path}")
     return {
@@ -505,6 +511,70 @@ def consume_bridge_session_log() -> list:
     if mod is not None:
         mod.sessions = []
     return sessions
+
+
+def _link_result(bridge_response: Mapping[str, Any]) -> dict:
+    """Return the ephemeral Jimeng link fields needed by the Codex caller."""
+
+    redirect_url = str(bridge_response.get("redirect_url") or "")
+    if bridge_response.get("status") != "ready" or not redirect_url:
+        raise PlayblastFailedError("Jimeng local bridge did not return a ready link")
+    return {
+        "status": "ready",
+        "redirect_url": redirect_url,
+        "expires_at": bridge_response.get("expires_at"),
+        "port": bridge_response.get("port"),
+    }
+
+
+def run_jimeng_flow(cmds: Any, request: Mapping[str, Any]) -> dict:
+    """Run an authorized official Jimeng flow and return artifact plus live link.
+
+    The stable artifact receipt remains token-free. The link is returned in a
+    separate ephemeral block so Codex can hand it to the user before the Maya
+    process and loopback bridge exit.
+    """
+
+    if request.get("authorize_upload") is not True:
+        raise UploadNotAuthorizedError(
+            "explicit authorize_upload=true is required before creating a Jimeng link"
+        )
+
+    mode = str(request.get("mode") or "white_model")
+    consume_bridge_session_log()
+
+    if mode == "existing_video":
+        verify_vendor_checksum()
+        upload_bridge = _import_jimeng_upload_bridge()
+        try:
+            bridge_response = dict(
+                upload_bridge.start_local_bridge(
+                    video_path=str(request["video_path"]),
+                    prompt=str(request.get("prompt") or ""),
+                    target_url=str(
+                        request.get("target_url")
+                        or "https://jimeng.jianying.com/ai-tool/home"
+                    ),
+                    max_file_size=request.get("max_file_size"),
+                )
+            )
+        except Exception as exc:
+            raise PlayblastFailedError(f"local bridge failed: {exc}") from exc
+        artifact = _existing_video_receipt(
+            request,
+            media_path=bridge_response.get("video") or request["video_path"],
+        )
+    else:
+        artifact = export_playblast(cmds, request)
+        sessions = consume_bridge_session_log()
+        if not sessions:
+            raise PlayblastFailedError("Jimeng local bridge result was not available")
+        bridge_response = dict(sessions[-1])
+
+    return {
+        "artifact_receipt": artifact,
+        "jimeng_link": _link_result(bridge_response),
+    }
 
 
 def export_playblast(cmds: Any, request: Mapping[str, Any]) -> dict:
@@ -611,10 +681,12 @@ __all__ = [
     "RestoreUnconfirmedError",
     "SceneNotAuthorizedError",
     "TimeoutError",
+    "UploadNotAuthorizedError",
     "consume_bridge_session_log",
     "diagnostics_for",
     "export_playblast",
     "inspect_scene",
+    "run_jimeng_flow",
     "restored_maya_state",
     "to_json",
     "verify_vendor_checksum",

@@ -1,7 +1,7 @@
 {
   "name": "codex-maya",
   "version": "0.1.0",
-  "description": "Safe, reviewable Autodesk Maya scene inspection and Playblast workflows for Codex.",
+  "description": "Inspect Autodesk Maya scenes, create reversible Playblasts, and return a Jimeng link through the official uploader.",
   "author": {"name": "Full Stack Skills / PartMe.AI", "url": "https://github.com/partme-ai"},
   "homepage": "https://github.com/partme-ai/codex-maya-plugin",
   "repository": "https://github.com/partme-ai/codex-maya-plugin",
@@ -10,8 +10,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Codex Maya",
-    "shortDescription": "Inspect Maya scenes and create safe Playblasts",
-    "longDescription": "Prepare reviewable Maya scene inspections and Playblast previews with explicit project scopes, media validation, diagnostics, and temporary-state restoration.",
+    "shortDescription": "Create safe Maya Playblasts and Jimeng links",
+    "longDescription": "Inspect Maya scenes and reuse the official Jimeng uploader for reversible Playblast or existing-video links, with explicit authorization, media validation, diagnostics, and temporary-state restoration.",
     "developerName": "Full Stack Skills / PartMe.AI",
     "category": "Creativity",
     "capabilities": ["Interactive", "Read", "Write"],
@@ -20,7 +20,7 @@
     "termsOfServiceURL": "https://github.com/partme-ai/codex-maya-plugin/blob/main/TERMS.md",
     "defaultPrompt": [
       "Inspect this Maya scene and summarize its cameras and timeline",
-      "Create a safe Playblast and restore the Maya scene state",
+      "Create a safe Playblast, restore the Maya scene, and make a Jimeng link",
       "Diagnose this Maya preview failure without installing software"
     ],
     "brandColor": "#14B8A6",

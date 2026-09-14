@@ -6,21 +6,22 @@ license: Apache-2.0 — see LICENSE
 
 # codex-maya-export-preview — 即梦 Maya 可恢复预览导出
 
-从已授权的 Maya 场景导出 Playblast 预览，产出 Codex `artifact_receipt`。
+从已授权的 Maya 场景导出 Playblast 预览，产出 Codex `artifact_receipt`，并在用户明确
+授权后通过官方本地桥接返回即梦链接。
 **所有临时改动的场景状态都会被快照并在 `finally` 中恢复。**
 
 ## When to use / 什么时候使用
 
 - 用户说「渲染预览」「出个白模」「Playblast」「帮我出一版 review 视频」
-- 需要把 Maya 里的镜头变成可交给 `codex-dreamina-3d` 的视频产物
-- 用户已经有一个本地视频，只想登记进 Codex 流水线（`existing_video` 模式）
+- 需要把 Maya 镜头渲染成预览并生成即梦链接
+- 用户已经有一个本地视频，需要直接生成即梦链接（`existing_video` 模式）
 - 需要在出图后确认「场景状态被完整还原了」
 
 ## When NOT to use / 不适用场景（不该用本技能）
 
 - 只是想看看场景里有什么（相机 / 帧范围 / 引用）→ 用 `codex-maya-inspect`
 - 导出报错了，想知道原因 → 用 `codex-maya-diagnose`
-- 想上传到即梦云端、消耗付费额度 → 本技能只做本地导出，上传由 `codex-dreamina-3d` 编排
+- 想自动登录即梦或执行付费生成 → 本技能只生成链接，账号登录和生成确认由用户完成
 - 想修改场景本身 → 本技能只在导出期间临时改动并还原，不做永久修改
 
 ## Rules
@@ -29,7 +30,7 @@ license: Apache-2.0 — see LICENSE
 2. **一次性。** 渲染失败**绝不自动重试**。失败就是失败，把错误如实报给用户，由用户决定是否重新发起。
 3. **不安装。** 缺编解码器、缺 Python 包时如实报告，由用户在 Codex 之外自行安装。不要 `pip install`。
 4. **复用即梦实现。** Playblast 捕获、材质检测、ffmpeg 转换、本地网桥都复用 `scripts/jimeng_third_party/` 下的即梦官方实现，不重写。
-5. **不上传。** 本技能只产生本地媒体文件与回执；本地网桥的 token 只留在进程内日志，不进入回执。
+5. **链接与回执分离。** 临时 token 不进入稳定回执；授权调用通过独立 `jimeng_link` 块返回链接。
 6. **相对路径。** `media_path` 是相对授权输出根的路径；绝对路径只在被脱敏的诊断里出现。
 7. **帧数下限。** 即梦协议要求最少 44 帧（约 1.8 秒），少于该值在配置阶段就会被拒绝。
 
@@ -41,11 +42,12 @@ Step 2 — 发现 Maya（`existing_video` 模式跳过）：调用 `scripts/maya
 
 Step 3 — 恢复性导出：在 `scripts/maya_bridge.py::restored_maya_state` 上下文内调用即梦的 `playblast.run_playblast(...)`，随后调用 `upload_bridge.start_local_bridge(...)` 启动本地网桥。
 
-Step 4 — 组装回执：从产物文件计算 SHA-256、大小、时长，拼装成 `artifact_receipt`。网桥的 `redirect_url` 与 `resource_info_url` 写入进程内会话日志，**不进入回执**。
+Step 4 — 组装响应：从产物文件生成 token-free `artifact_receipt`，并把当前可用的
+`redirect_url` 放进独立的 `jimeng_link`；只有 `authorize_upload=true` 才能启动网桥。
 
 Step 5 — 校验媒体：用 `scripts/media_probe.py::validate_receipt` 重新探测产物并比对 SHA-256。
 
-Step 6 — 报告：向用户给出媒体路径、时长、大小、还原状态；如需打开即梦链接，从会话日志取 `redirect_url`。
+Step 6 — 报告：向用户给出媒体信息、还原状态和本次授权生成的即梦链接。
 
 ## Gotchas
 
@@ -74,8 +76,8 @@ Step 6 — 报告：向用户给出媒体路径、时长、大小、还原状态
 
 ## Safety declaration / 安全声明
 
-本技能**不访问外部网络**（本地网桥只监听 `127.0.0.1`）、**不收集用户数据**、
-**不上传场景内容或视频**、**不安装任何软件**、**不记录绝对路径**。
+本技能会按官方实现获取即梦 DCC 配置并生成即梦网页链接；视频由即梦网页通过
+`127.0.0.1` 临时桥接读取，不发布为公网文件。技能**不收集账号凭据**、**不安装任何软件**。
 它只在用户授权的工程范围内读写本地文件，所有临时场景改动都会还原。
 本地网桥的访问 token 仅存在于当前进程内存中，不落盘、不进入回执。
 

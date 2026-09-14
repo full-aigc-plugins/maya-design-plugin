@@ -8,11 +8,15 @@
 
 ## 当前状态
 
-仓库现已具备兼容插件基础：manifest、Marketplace 元数据、品牌资产、Legal 文档、验证脚本、测试和实施目录。Maya 业务工作流尚未实现，也未声明通过 Maya 运行兼容性验证。
+仓库已完成离线函数级集成：Codex 直接复用即梦官方 Maya 插件的 Playblast、ffmpeg
+转换和本地桥接，为相机渲染或已有视频返回即梦链接。真实 Maya 驱动与运行兼容性
+仍未验收，不能由离线测试推断。
 
 ## 项目定位
 
-`codex-maya` 计划检查用户授权的 Maya 场景、选择相机和时间轴范围、生成白模或材质预览 Playblast、校验本地媒体，并恢复临时场景状态。它不上传 Dreamina；联动由 `codex-dreamina-3d` 负责。
+`codex-maya` 检查用户授权的 Maya 场景、生成可恢复的白模或材质 Playblast，并复用
+官方 `upload_bridge.start_local_bridge()` 生成即梦链接。稳定回执不保存临时 token，
+链接只在用户明确授权的当次响应中返回。
 
 ```text
 Codex -> 受控 Maya 运行器 -> mayapy / Maya batch -> Playblast -> 验证 -> 产物回执
@@ -24,10 +28,11 @@ Codex -> 受控 Maya 运行器 -> mayapy / Maya batch -> Playblast -> 验证 -> 
 - 使用 argv 调用和明确工程/输出目录范围。
 - 诊断中文路径和 `ModuleNotFoundError`，但不自动安装包。
 - 恢复视图面板、选择集、时间轴、渲染全局设置和临时覆盖。
-- 不捆绑 Maya、编码器、供应商上传器源码或凭据。
+- 不捆绑 Maya、编码器或凭据；即梦官方 Python 源码按校验和原样 vendoring。
 
 ## 文档
 
+- [安装、授权与使用指南](docs/getting-started.zh-CN.md)
 - [Architecture](docs/Codex-Maya-Plugin-Architecture.md) / [中文](docs/Codex-Maya-Plugin-Architecture.zh_CN.md)
 - [Technical solution](docs/Codex-Maya-Plugin-Technical-Solution.md) / [中文](docs/Codex-Maya-Plugin-Technical-Solution.zh_CN.md)
 - [设计规格](docs/superpowers/specs/2026-09-11-codex-maya-plugin-design.md)

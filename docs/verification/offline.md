@@ -30,7 +30,8 @@ trailing-whitespace or no-newline-at-EOF regression.
 - Real Maya discovery (`MAYA_NOT_FOUND` / `ABI_MISMATCH` are observed in the
   test for the failure path, not the happy path).
 - Real Playblast capture, conversion, validation, and publication.
-- Local-bridge link hand-off to `codex-dreamina-3d`.
+- Real browser hand-off and Jimeng Web import. Offline tests cover the returned link contract,
+  not the browser's ability to fetch the video from the loopback bridge.
 
 These are gated by `docs/verification/maya-runtime.md`.
 
@@ -83,4 +84,3 @@ only against the prose:
 A live `codex plugin marketplace add` / install round-trip. The `codex` binary
 is not installed in this environment, so package loading by the real CLI is
 unverified here and is recorded as such.
-

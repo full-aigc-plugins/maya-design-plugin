@@ -19,3 +19,17 @@ No Dreamina upload, paid generation, vendor source reuse, arbitrary plug-in load
 ## Acceptance
 
 Offline unit/fixture tests and plugin validation must pass. Real Maya compatibility remains blocked until an authorized runtime matrix is executed.
+
+---
+
+## Revision 2 (2026-09-12): reuse-based Jimeng integration
+
+The original no-vendor/no-upload boundary is superseded. The official
+`jimeng_maya_uploader` already owns material detection, Playblast capture, ffmpeg conversion,
+protocol limits, loopback bridge creation, and Jimeng link generation. Codex must reuse those
+modules byte-for-byte rather than implement a second pipeline.
+
+Both official user flows are in scope: camera Playblast and existing local video. A caller must
+set `authorize_upload=true` before a loopback bridge is started. The stable artifact receipt
+remains token-free; the ready Jimeng URL is returned separately as ephemeral response data.
+Paid generation and browser/account automation remain out of scope.
