@@ -49,6 +49,30 @@ These are gated by `docs/verification/maya-runtime.md`.
 | Extended distribution (links, secrets, vendor) | `tests/test_distribution_extended.py` |
 | **Official plugin-format conformance** | `tests/test_codex_plugin_compliance.py` |
 | **Codex-to-Maya driver (end to end)** | `tests/test_maya_driver.py` |
+| **Receipt compatibility with codex-dreamina-3d** | `tests/test_handoff_compat.py` |
+
+## Handoff to codex-dreamina-3d
+
+`codex-dreamina-3d` does not consume this plugin's `artifact_receipt`. It discovers
+companions through `capability_probe` (manifest `receipt_contract_versions` plus an
+executable `bin/maya_adapter`) and validates an incoming preview receipt with
+`handoff_validator`. `scripts/dreamina_adapter.py` is the translation point.
+
+`tests/test_handoff_compat.py` runs the sibling's **real** `capability_probe` and
+`handoff_validator` against this checkout, rather than re-implementing the contract — a
+second copy of my own assumptions would only prove the two copies agree. It asserts that
+`discover_companions` finds `codex-maya`, that the produced receipt is accepted for both
+`camera_render` and `local_video`, and that a tampered receipt is still rejected (so the
+acceptance is not vacuous).
+
+Six mutations were injected and each turns the suite red: renaming `producer_plugin` back to
+`plugin_id`, `restoration.status` back to `"restored"`, changing the codec, flattening
+`dimensions`, dropping `receipt_contract_versions` from the manifest, and clearing the
+adapter's executable bit.
+
+Where `codex-dreamina-3d` is not checked out next to this repository, the cross-repo tests
+skip with an explicit reason naming the missing path, so the gap stays visible instead of
+showing green.
 
 ## Driver
 

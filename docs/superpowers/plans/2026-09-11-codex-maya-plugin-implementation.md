@@ -189,6 +189,44 @@ runtime_matrix = observed evidence or explicit blocker
 | Real CLI install round trip | Complete | `codex plugin add codex-maya@partme-ai-maya` installed 0.1.0; `codex debug prompt-input` lists all four Skills |
 | Real Maya UI/Playblast runtime | Blocked | No authorized Maya/mayapy installation found |
 | Executable Codex-to-Maya driver | **Complete offline** | `scripts/maya_request.py` + `maya_runner.run_request`; `tests/test_maya_driver.py` (22 tests, mutation-verified) |
+| Receipt compatibility with `codex-dreamina-3d` (Task 7 requirement) | **Complete offline** | `scripts/dreamina_adapter.py`, `bin/maya_adapter`; `tests/test_handoff_compat.py` (29 tests, 6 mutations verified) |
+
+### Handoff compatibility notes (2026-09-12)
+
+Task 7 required "Confirm output receipt compatibility against the same fixtures used by
+`codex-dreamina-3d`." That check had never been run, and it failed. Three independent breaks
+meant the handoff could not start:
+
+1. `codex-dreamina-3d`'s `capability_probe` requires `receipt_contract_versions` in the
+   companion manifest. This manifest did not have it.
+2. The same probe requires an executable at `bin/maya_adapter`. This plugin had no `bin/`.
+3. Even given both, `codex-dreamina-3d`'s `handoff_validator` consumes a different shape
+   from this plugin's own `artifact_receipt`: `producer_plugin` (not `plugin_id`), `path`
+   (not `media_path`), `sha256` (not `media_sha256`), nested `dimensions` (not flat
+   `width`/`height`), `fps` (not `frame_rate`), `bytes` (not `file_size_bytes`),
+   `camera.name`, `preview_mode` (not `display_mode`), and `restoration.status ==
+   "confirmed"` (not `"restored"`).
+
+`discover_companions` returned `[]` for `codex-maya` before the fix, so the pipeline could
+not even reach validation.
+
+The fix adds `bin/maya_adapter` and `scripts/dreamina_adapter.py`, mirroring the working
+sibling `codex-blender-plugin/scripts/dreamina_adapter.py`, plus the manifest field. The
+adapter is the single translation point: the plugin's internal receipt stays as it is, and
+the adapter derives the consumer's shape from the produced artifact plus a media probe.
+
+The adapter **refuses** to emit a receipt the consumer would reject — codec, container,
+dimension (16..4096), fps (1..120), duration ((0, 60]), byte count, frame range, and camera
+name are all range-checked, so an out-of-range artifact fails here with a precise message
+instead of arriving downstream as an opaque rejection.
+
+Evidence, run against the sibling's real code rather than a re-implementation:
+
+- `handoff_validator.validate_artifact` accepts both a `camera_render` and a `local_video`
+  receipt produced by this adapter.
+- `capability_probe.discover_companions` now returns `codex-maya` with a callable adapter.
+- A/B against the sibling's own fake adapter: both produce the same 16-key receipt, both
+  accepted, key-set difference empty.
 
 ### Driver implementation notes (2026-09-12)
 
