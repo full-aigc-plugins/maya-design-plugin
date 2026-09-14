@@ -28,6 +28,53 @@ and does not prove.
 - Permission to invoke `mayapy` from the harness subprocess (no shell
   strings, argv only).
 
+## Unblocking: obtaining Maya
+
+Maya is commercial software and is not distributed through any package manager
+(there is no Homebrew cask for it -- `brew search --cask autodesk` offers only
+Fusion). The download is delivered through an Autodesk Account, so it has to be
+fetched and licensed by the machine's owner:
+
+1. Sign in or create an account at <https://www.autodesk.com>
+2. Open <https://www.autodesk.com/products/maya/free-trial> (30 days, no credit
+   card) or Autodesk Account -> Maya -> Downloads
+3. Choose macOS, the current version, and the Apple Silicon build
+4. Run the installer; it lands in `/Applications/Autodesk/maya<year>` by default
+
+Nothing in this plugin installs, downloads, or licenses Maya, and
+`scripts/maya_preflight.py` is asserted never to acquire those capabilities.
+
+### Check whether the install is usable
+
+```bash
+python3 scripts/maya_preflight.py
+python3 scripts/maya_preflight.py --explicit-root /Applications/Autodesk/maya2026
+```
+
+It exits 0 when discovery succeeds and 1 when it does not, and prints the roots
+it searched plus the official route to obtain Maya. It also flags a macOS
+version outside Autodesk's documented range for the installed Maya year, so a
+failure there is not mistaken for a plugin bug.
+
+## Closing this matrix
+
+Once a real Maya is installed, one command produces the evidence block:
+
+```bash
+python3 scripts/run_runtime_matrix.py \
+    --scene <fixture scene> --camera <name> --start 1 --end 48 \
+    --write docs/verification/maya-runtime.md
+```
+
+It records probe, inspect (including a determinism re-run), Playblast export
+with media validation, restoration equality, the Jimeng bridge when
+`--authorize-upload` is given, and the receipt as accepted by
+`codex-dreamina-3d`'s own `handoff_validator`. It needs a real Maya on purpose:
+inferring Playblast support from a fake `maya.cmds` is what the plan forbids.
+
+The bridge step deliberately does not record `redirect_url`, which carries a
+live token.
+
 ## Driver status (2026-09-12)
 
 `python3 scripts/maya_runner.py <inspect|export|jimeng-flow> ...` is the
