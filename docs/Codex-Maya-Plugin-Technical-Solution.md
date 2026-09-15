@@ -27,7 +27,7 @@ Use a Codex Skill layer, an argv-only runner, and a Maya Python bridge supportin
 
 ```text
 .codex-plugin/plugin.json
-skills/codex-maya-*/
+skills/maya-*/
 scripts/maya_runner.py
 scripts/maya_bridge.py
 scripts/media_probe.py

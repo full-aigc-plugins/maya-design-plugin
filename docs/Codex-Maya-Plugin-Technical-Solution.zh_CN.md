@@ -27,7 +27,7 @@
 
 ```text
 .codex-plugin/plugin.json
-skills/codex-maya-*/
+skills/maya-*/
 scripts/maya_runner.py
 scripts/maya_bridge.py
 scripts/media_probe.py

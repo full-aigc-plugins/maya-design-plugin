@@ -268,7 +268,7 @@ python3 scripts/validate_distribution.py
 ## 项目结构
 
 ```text
-codex-maya-plugin/
+maya-plugin/
 ├── .codex-plugin/plugin.json   # 身份与展示元数据
 ├── .agents/plugins/marketplace.json
 ├── scripts/                    # 桥接、运行器、诊断、媒体探测、校验器
@@ -282,8 +282,8 @@ codex-maya-plugin/
 
 - [Architecture](docs/Codex-Maya-Plugin-Architecture.md) · [架构文档](docs/Codex-Maya-Plugin-Architecture.zh_CN.md)
 - [Technical solution](docs/Codex-Maya-Plugin-Technical-Solution.md) · [技术方案](docs/Codex-Maya-Plugin-Technical-Solution.zh_CN.md)
-- [设计规格](docs/superpowers/specs/2026-09-11-codex-maya-plugin-design.md)
-- [实施计划](docs/superpowers/plans/2026-09-11-codex-maya-plugin-implementation.md)
+- [设计规格](docs/superpowers/specs/2026-09-11-maya-plugin-design.md)
+- [实施计划](docs/superpowers/plans/2026-09-11-maya-plugin-implementation.md)
 
 ## 贡献与支持
 

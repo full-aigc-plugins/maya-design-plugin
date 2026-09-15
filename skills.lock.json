@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "package": "maya-skills",
+      "repo": "https://github.com/full-aigc-skills/maya-skills.git",
+      "ref": "v1.0.0",
+      "sha": "4d3fb5693b519798b795ca88ac45ba29452dce7a",
+      "skills": [
+        "maya-diagnose",
+        "maya-export-preview",
+        "maya-inspect",
+        "maya-use"
+      ],
+      "dest": "skills/",
+      "sha256": {
+        "maya-diagnose": "9d0684bc08936183a7b133eb9d2bb86cdeb5444262085a4e4c8171be7c5fd3e3",
+        "maya-export-preview": "ffba538d364b2ba9ae453296f1682ab205c8b6a07f981c75730ce20ab6e2e479",
+        "maya-inspect": "44c26c637fc624007c482ec043938e410ca9ecb830411de1d6743c87a11d2be8",
+        "maya-use": "48d7d6cb62a984bd3c37f802724f9698b6c82d709105d5b1df19a610fb54782f"
+      }
+    }
+  ]
+}

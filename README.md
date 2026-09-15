@@ -268,7 +268,7 @@ Recorded evidence:
 ## Project structure
 
 ```text
-codex-maya-plugin/
+maya-plugin/
 ├── .codex-plugin/plugin.json   # identity and presentation metadata
 ├── .agents/plugins/marketplace.json
 ├── scripts/                    # bridge, runner, diagnostics, media probe, validator
@@ -282,8 +282,8 @@ codex-maya-plugin/
 
 - [Architecture](docs/Codex-Maya-Plugin-Architecture.md) · [架构文档](docs/Codex-Maya-Plugin-Architecture.zh_CN.md)
 - [Technical solution](docs/Codex-Maya-Plugin-Technical-Solution.md) · [技术方案](docs/Codex-Maya-Plugin-Technical-Solution.zh_CN.md)
-- [Design spec](docs/superpowers/specs/2026-09-11-codex-maya-plugin-design.md)
-- [Implementation plan](docs/superpowers/plans/2026-09-11-codex-maya-plugin-implementation.md)
+- [Design spec](docs/superpowers/specs/2026-09-11-maya-plugin-design.md)
+- [Implementation plan](docs/superpowers/plans/2026-09-11-maya-plugin-implementation.md)
 
 ## Contributing and support
 
