@@ -28,10 +28,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = (
-    "codex-maya-use",
-    "codex-maya-inspect",
-    "codex-maya-export-preview",
-    "codex-maya-diagnose",
+    "maya-use",
+    "maya-inspect",
+    "maya-export-preview",
+    "maya-diagnose",
 )
 SCHEMAS = (
     "schemas/scene_receipt.schema.json",

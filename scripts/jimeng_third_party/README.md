@@ -7,4 +7,4 @@ files in this directory are **third-party** and must not be edited by
 checksum so any accidental edit fails the suite.
 
 Codex owns the integration layer (`scripts/maya_bridge.py`,
-`scripts/maya_runner.py`, `skills/codex-maya-*`) on top of this package.
+`scripts/maya_runner.py`, `skills/maya-*`) on top of this package.

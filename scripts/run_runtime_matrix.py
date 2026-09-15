@@ -285,7 +285,7 @@ def main(argv=None) -> int:
     parser.add_argument("--fps", type=float, default=24.0)
     parser.add_argument("--width", type=int, default=1280)
     parser.add_argument("--height", type=int, default=720)
-    parser.add_argument("--output-dir", default="/tmp/codex-maya-matrix")
+    parser.add_argument("--output-dir", default="/tmp/maya-matrix")
     parser.add_argument("--explicit-root", default=None)
     parser.add_argument("--search-path", default="")
     parser.add_argument("--timeout", type=float, default=900.0)

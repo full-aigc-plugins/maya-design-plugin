@@ -411,7 +411,7 @@ def run_request(
 
     filtered_env = _filter_environment(env if env is not None else os.environ)
 
-    with tempfile.TemporaryDirectory(prefix="codex-maya-") as tmp:
+    with tempfile.TemporaryDirectory(prefix="maya-") as tmp:
         tmp_path = Path(tmp)
         request_path = tmp_path / REQUEST_FILENAME
         response_path = tmp_path / RESPONSE_FILENAME
@@ -477,7 +477,7 @@ def _emit(payload: Mapping[str, object], *, failed: bool = False) -> None:
 
 def _cli(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        prog="codex-maya-runner",
+        prog="maya-runner",
         description="Discover a Maya runtime and drive one request through it.",
     )
     sub = parser.add_subparsers(dest="command", required=True)

@@ -17,10 +17,10 @@ ROOT = Path(__file__).resolve().parents[1]
 SKILLS_DIR = ROOT / "skills"
 
 REQUIRED_SKILLS = (
-    "codex-maya-use",
-    "codex-maya-inspect",
-    "codex-maya-export-preview",
-    "codex-maya-diagnose",
+    "maya-use",
+    "maya-inspect",
+    "maya-export-preview",
+    "maya-diagnose",
 )
 
 FRONTMATTER_RE = re.compile(r"^---\n(?P<body>.*?)\n---\n", re.DOTALL)
@@ -126,27 +126,27 @@ class SkillDistinctnessTests(unittest.TestCase):
 
     def test_inspect_description_mentions_inspection(self) -> None:
         descs = self._descs()
-        self.assertIn("inspect", descs["codex-maya-inspect"])
+        self.assertIn("inspect", descs["maya-inspect"])
 
     def test_export_description_mentions_export(self) -> None:
         descs = self._descs()
-        self.assertIn("export", descs["codex-maya-export-preview"])
-        self.assertIn("playblast", descs["codex-maya-export-preview"])
+        self.assertIn("export", descs["maya-export-preview"])
+        self.assertIn("playblast", descs["maya-export-preview"])
 
     def test_diagnose_description_mentions_diagnose(self) -> None:
         descs = self._descs()
-        self.assertIn("diagnos", descs["codex-maya-diagnose"])
+        self.assertIn("diagnos", descs["maya-diagnose"])
 
     def test_use_description_references_other_skills(self) -> None:
         descs = self._descs()
         # The router must explicitly mention its three delegation targets so
         # it never duplicates their workflows in its own body.
         for target in (
-            "codex-maya-inspect",
-            "codex-maya-export-preview",
-            "codex-maya-diagnose",
+            "maya-inspect",
+            "maya-export-preview",
+            "maya-diagnose",
         ):
-            self.assertIn(target, descs["codex-maya-use"])
+            self.assertIn(target, descs["maya-use"])
 
 
 class SkillSafetyTests(unittest.TestCase):
@@ -177,7 +177,7 @@ class SkillSafetyTests(unittest.TestCase):
                     self.assertNotIn(phrase, lowered, f"{name}: forbids {phrase!r}")
 
     def test_export_skill_explicitly_disclaims_auto_retry(self) -> None:
-        _, body = _parse_skill("codex-maya-export-preview")
+        _, body = _parse_skill("maya-export-preview")
         lowered = body.lower()
         english = "never auto-retries" in lowered or "never retries" in lowered
         chinese = "绝不自动重试" in body or "不要重试" in body
@@ -187,7 +187,7 @@ class SkillSafetyTests(unittest.TestCase):
         )
 
     def test_diagnose_skill_explicitly_disclaims_installing(self) -> None:
-        _, body = _parse_skill("codex-maya-diagnose")
+        _, body = _parse_skill("maya-diagnose")
         lowered = body.lower()
         english = "never installs" in lowered or "no `pip install`" in lowered
         chinese = "禁止 `pip install`" in body or "不安装" in body
@@ -197,7 +197,7 @@ class SkillSafetyTests(unittest.TestCase):
         )
 
     def test_inspect_skill_explicitly_disclaims_mutation(self) -> None:
-        _, body = _parse_skill("codex-maya-inspect")
+        _, body = _parse_skill("maya-inspect")
         lowered = body.lower()
         english = "no plug-in loading" in lowered or "never loads plug-ins" in lowered
         chinese = "不加载插件" in body or "不修改场景" in body
@@ -211,7 +211,7 @@ class SkillAntiRoutingTests(unittest.TestCase):
     def test_router_does_not_duplicate_workflow_instructions(self) -> None:
         """The router's body must defer workflow detail to the dedicated Skills."""
 
-        _, body = _parse_skill("codex-maya-use")
+        _, body = _parse_skill("maya-use")
         # The router must not contain the specific export workflow header.
         self.assertNotIn("# Implementation", body)
         # It must, however, list the routing targets.
