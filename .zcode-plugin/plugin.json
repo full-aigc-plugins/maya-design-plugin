@@ -1,0 +1,38 @@
+{
+  "name": "maya",
+  "displayName": "Maya",
+  "displayName_i18n": {
+    "en": "Maya",
+    "zh-CN": "Maya 三维动画"
+  },
+  "version": "0.1.0",
+  "description": "Inspect Autodesk Maya scenes, create reversible Playblasts, and return a Jimeng link through the official uploader.",
+  "description_i18n": {
+    "en": "Inspect Autodesk Maya scenes, create reversible Playblasts, and return a Jimeng link through the official uploader.",
+    "zh-CN": "检查 Autodesk Maya 场景、生成可回滚的 Playblast 预览，并经官方上传器返回即梦链接。"
+  },
+  "author": {
+    "name": "Full Stack Skills / PartMe.AI",
+    "url": "https://github.com/partme-ai"
+  },
+  "homepage": "https://github.com/partme-ai/codex-maya-plugin",
+  "repository": "https://github.com/partme-ai/codex-maya-plugin",
+  "license": "Apache-2.0",
+  "keywords": [
+    "maya",
+    "3d",
+    "playblast",
+    "animation",
+    "previs"
+  ],
+  "skills": "skills",
+  "commands": "commands",
+  "userConfig": {
+    "maya_location": {
+      "type": "string",
+      "title": "Maya 安装位置",
+      "description": "Maya 可执行文件或安装根目录；留空则按系统默认位置探测（对应 MAYA_LOCATION）。",
+      "required": false
+    }
+  }
+}

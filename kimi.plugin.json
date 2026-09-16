@@ -1,0 +1,36 @@
+{
+  "name": "maya",
+  "version": "0.1.0",
+  "description": "Inspect Autodesk Maya scenes, create reversible Playblasts, and return a Jimeng link through the official uploader.",
+  "author": {
+    "name": "Full Stack Skills / PartMe.AI"
+  },
+  "homepage": "https://github.com/partme-ai/codex-maya-plugin",
+  "license": "Apache-2.0",
+  "keywords": [
+    "maya",
+    "3d",
+    "playblast"
+  ],
+  "interface": {
+    "displayName": "Maya",
+    "shortDescription": "Inspect Maya scenes and create safe Playblasts",
+    "longDescription": "Inspect Autodesk Maya scenes, create reversible Playblasts, and hand off to Jimeng through the official uploader. Ships read-only diagnostics and a guarded runtime preflight.",
+    "developerName": "Full Stack Skills / PartMe.AI",
+    "websiteURL": "https://github.com/partme-ai/codex-maya-plugin"
+  },
+  "skills": "./skills/",
+  "commands": "./commands/",
+  "hooks": [
+    {
+      "event": "SessionStart",
+      "command": "python3 ./hooks/env_check.py",
+      "timeout": 30
+    },
+    {
+      "event": "UserPromptSubmit",
+      "command": "python3 ./hooks/check_maya_intent.py",
+      "timeout": 15
+    }
+  ]
+}
