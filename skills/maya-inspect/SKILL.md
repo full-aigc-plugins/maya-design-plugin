@@ -90,12 +90,3 @@ python3 scripts/maya_runner.py inspect --scene <path>     ← 你调用的
 
 本技能**不访问网络**、**不收集任何用户数据**、**不上传场景内容**、**不记录绝对路径**、**不安装任何软件包**。
 它只读取用户显式授权的场景文件并在本机产生 JSON。诊断信息中的绝对路径一律脱敏为 `<redacted-path>`。
-
-## References
-
-需要更细的执行细节时加载以下文件：
-
-- [references/workflows/inspection.md](references/workflows/inspection.md) — 完整检查流程与字段来源
-- [references/workflows/determinism.md](references/workflows/determinism.md) — 确定性输出与 `scene_id` 派生规则
-- [references/errors/error-catalog.md](references/errors/error-catalog.md) — 全部错误码与处置建议
-- [references/errors/path-handling.md](references/errors/path-handling.md) — 中文路径与脱敏规则

@@ -77,18 +77,3 @@ Step 5 — 交给目标技能。本技能到此结束，不继续执行下游动
 
 本技能**不访问网络**、**不收集用户数据**、**不上传任何内容**、**不安装软件**、
 **不调用 Maya**、**不读写场景文件**。它只输出路由文本，不产生副作用。
-
-## References
-
-需要更细的路由判断细节时加载以下文件：
-
-- [references/workflows/routing.md](references/workflows/routing.md) — 路由判断详解
-- [references/workflows/composition.md](references/workflows/composition.md) — 组合场景的顺序与 scene_id 传递
-- [references/workflows/anti-routing.md](references/workflows/anti-routing.md) — 什么情况下**不该**用本技能
-- [references/errors/misroute-recovery.md](references/errors/misroute-recovery.md) — 路由错了怎么回退
-- [references/errors/ambiguous-requests.md](references/errors/ambiguous-requests.md) — 模糊请求的澄清话术
-- [references/schemas/skill-boundaries.md](references/schemas/skill-boundaries.md) — 四个技能的能力边界对照
-- [references/schemas/handoff-contract.md](references/schemas/handoff-contract.md) — 技能之间的交接契约
-- [references/safety/zero-side-effect.md](references/safety/zero-side-effect.md) — 零副作用保证
-- [references/safety/no-duplication.md](references/safety/no-duplication.md) — 不重复原则
-- [references/workflows/quickstart.md](references/workflows/quickstart.md) — 三步上手

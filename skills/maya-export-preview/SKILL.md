@@ -117,18 +117,3 @@ python3 scripts/maya_runner.py jimeng-flow --request <req.json>   ← 你调用�
 `127.0.0.1` 临时桥接读取，不发布为公网文件。技能**不收集账号凭据**、**不安装任何软件**。
 它只在用户授权的工程范围内读写本地文件，所有临时场景改动都会还原。
 本地网桥的访问 token 仅存在于当前进程内存中，不落盘、不进入回执。
-
-## References
-
-需要更细的执行细节时加载以下文件：
-
-- [references/workflows/pipeline.md](references/workflows/pipeline.md) — 六步导出流水线详解
-- [references/workflows/modes.md](references/workflows/modes.md) — 三种模式的差异与选择
-- [references/workflows/restoration.md](references/workflows/restoration.md) — 状态快照与还原机制
-- [references/workflows/media-validation.md](references/workflows/media-validation.md) — 媒体验证与 SHA-256 契约
-- [references/workflows/local-bridge.md](references/workflows/local-bridge.md) — 本地网桥与 token 生命周期
-- [references/errors/error-catalog.md](references/errors/error-catalog.md) — 全部错误码
-- [references/errors/retry-policy.md](references/errors/retry-policy.md) — 为什么绝不自动重试
-- [references/errors/restoration-failures.md](references/errors/restoration-failures.md) — 还原失败处置
-- [references/schemas/artifact-receipt-fields.md](references/schemas/artifact-receipt-fields.md) — 回执字段全表
-- [references/safety/vendor-integration.md](references/safety/vendor-integration.md) — 即梦源码复用边界与校验和

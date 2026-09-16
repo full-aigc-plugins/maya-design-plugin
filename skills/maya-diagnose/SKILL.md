@@ -77,18 +77,3 @@ Step 6 — 交接：向用户说明分类结论、观察到的版本号，以及
 **不修改 Maya 模块搜索路径**、**不读写用户环境配置**。
 它只读取当前进程与宿主环境的结构性信息（版本号、路径类别），
 所有绝对路径与环境变量值在输出前一律脱敏。
-
-## References
-
-需要更细的执行细节时加载以下文件：
-
-- [references/workflows/triage.md](references/workflows/triage.md) — 五类故障的分诊流程
-- [references/workflows/environment-probe.md](references/workflows/environment-probe.md) — 宿主环境探测方式
-- [references/workflows/fingerprinting.md](references/workflows/fingerprinting.md) — 稳定指纹与日志关联
-- [references/errors/error-catalog.md](references/errors/error-catalog.md) — 错误码目录与处置
-- [references/errors/abi-matrix.md](references/errors/abi-matrix.md) — Maya 版本与 Python ABI 对照
-- [references/errors/module-load-failures.md](references/errors/module-load-failures.md) — 模块加载失败细分
-- [references/errors/path-issues.md](references/errors/path-issues.md) — 路径类故障与中文路径
-- [references/errors/recovery-playbook.md](references/errors/recovery-playbook.md) — 分场景处置手册
-- [references/safety/redaction-rules.md](references/safety/redaction-rules.md) — 脱敏规则
-- [references/safety/no-install-policy.md](references/safety/no-install-policy.md) — 不安装策略
