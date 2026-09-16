@@ -15,8 +15,8 @@
     "name": "Full Stack Skills / PartMe.AI",
     "url": "https://github.com/partme-ai"
   },
-  "homepage": "https://github.com/partme-ai/codex-maya-plugin",
-  "repository": "https://github.com/partme-ai/codex-maya-plugin",
+  "homepage": "https://github.com/partme-ai/partme-maya-plugin",
+  "repository": "https://github.com/partme-ai/partme-maya-plugin",
   "license": "Apache-2.0",
   "keywords": [
     "maya",
@@ -27,6 +27,7 @@
   ],
   "skills": "skills",
   "commands": "commands",
+  "hooks": "hooks/zcode-hooks.json",
   "userConfig": {
     "maya_location": {
       "type": "string",

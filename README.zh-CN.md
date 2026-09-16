@@ -6,7 +6,7 @@
 
 > 检查已授权的 Maya 场景、抓取可恢复的 Playblast、通过官方上传器返回即梦链接——并在结束后还原场景状态。
 
-[![版本](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/partme-ai/codex-maya-plugin)
+[![版本](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/partme-ai/partme-maya-plugin)
 [![许可证](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 
 [English](README.md) | [简体中文](README.zh-CN.md) · [安装](#安装) · [快速开始](#快速开始) · [运行契约](#运行契约) · [故障排查](#故障排查)
@@ -138,7 +138,7 @@ flowchart LR
 ### 从插件市场安装
 
 ```bash
-codex plugin marketplace add partme-ai/codex-maya-plugin --ref main
+codex plugin marketplace add partme-ai/partme-maya-plugin --ref main
 codex plugin add codex-maya@partme-ai-maya
 ```
 
@@ -287,7 +287,7 @@ maya-plugin/
 
 ## 贡献与支持
 
-功能问题请提交到 <https://github.com/partme-ai/codex-maya-plugin/issues>。提交变更前，请说明你验证所用的 Maya 版本与 Python ABI、是否改动快照集合或回执结构，并附上受影响的测试。
+功能问题请提交到 <https://github.com/partme-ai/partme-maya-plugin/issues>。提交变更前，请说明你验证所用的 Maya 版本与 Python ABI、是否改动快照集合或回执结构，并附上受影响的测试。
 
 ## 许可证
 

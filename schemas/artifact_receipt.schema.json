@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/partme-ai/codex-maya-plugin/schemas/artifact_receipt.schema.json",
+  "$id": "https://github.com/partme-ai/partme-maya-plugin/schemas/artifact_receipt.schema.json",
   "title": "Codex Maya Artifact Receipt",
   "description": "Validated, reversible Playblast artifact handed off to codex-dreamina-3d by codex-maya.",
   "type": "object",

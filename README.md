@@ -6,7 +6,7 @@
 
 > Inspect an authorized Maya scene, capture a reversible Playblast, and return a Jimeng link through the official uploader — with the scene state restored afterwards.
 
-[![Version](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/partme-ai/codex-maya-plugin)
+[![Version](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/partme-ai/partme-maya-plugin)
 [![License](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 
 [English](README.md) | [简体中文](README.zh-CN.md) · [Install](#installation) · [Quick start](#quick-start) · [Runtime contract](#runtime-contract) · [Troubleshooting](#troubleshooting)
@@ -138,7 +138,7 @@ Out of scope: Maya versions before 2022, and a Linux Maya installation that has 
 ### From the plugin marketplace
 
 ```bash
-codex plugin marketplace add partme-ai/codex-maya-plugin --ref main
+codex plugin marketplace add partme-ai/partme-maya-plugin --ref main
 codex plugin add codex-maya@partme-ai-maya
 ```
 
@@ -287,7 +287,7 @@ maya-plugin/
 
 ## Contributing and support
 
-Open functional issues at <https://github.com/partme-ai/codex-maya-plugin/issues>. Before proposing a change, state the Maya version and Python ABI you verified against, whether it alters the snapshot set or the receipt shape, and include the affected tests.
+Open functional issues at <https://github.com/partme-ai/partme-maya-plugin/issues>. Before proposing a change, state the Maya version and Python ABI you verified against, whether it alters the snapshot set or the receipt shape, and include the affected tests.
 
 ## License
 

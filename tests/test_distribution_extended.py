@@ -50,12 +50,12 @@ def _load_json(relative: str) -> dict:
 class GitHubSourceTests(unittest.TestCase):
     def test_repository_field_points_to_github(self) -> None:
         manifest = _load_json(".codex-plugin/plugin.json")
-        self.assertEqual(manifest["repository"], "https://github.com/partme-ai/codex-maya-plugin")
+        self.assertEqual(manifest["repository"], "https://github.com/partme-ai/partme-maya-plugin")
         marketplace = _load_json(".agents/plugins/marketplace.json")
         source = next(
             entry for entry in marketplace["plugins"] if entry["name"] == manifest["name"]
         )["source"]
-        self.assertEqual(source["url"], "https://github.com/partme-ai/codex-maya-plugin.git")
+        self.assertEqual(source["url"], "https://github.com/partme-ai/partme-maya-plugin.git")
         self.assertEqual(source["ref"], "main")
 
 

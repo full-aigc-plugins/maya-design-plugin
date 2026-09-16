@@ -5,7 +5,7 @@
   "author": {
     "name": "Full Stack Skills / PartMe.AI"
   },
-  "homepage": "https://github.com/partme-ai/codex-maya-plugin",
+  "homepage": "https://github.com/partme-ai/partme-maya-plugin",
   "license": "Apache-2.0",
   "keywords": [
     "maya",
@@ -17,7 +17,7 @@
     "shortDescription": "Inspect Maya scenes and create safe Playblasts",
     "longDescription": "Inspect Autodesk Maya scenes, create reversible Playblasts, and hand off to Jimeng through the official uploader. Ships read-only diagnostics and a guarded runtime preflight.",
     "developerName": "Full Stack Skills / PartMe.AI",
-    "websiteURL": "https://github.com/partme-ai/codex-maya-plugin"
+    "websiteURL": "https://github.com/partme-ai/partme-maya-plugin"
   },
   "skills": "./skills/",
   "commands": "./commands/",

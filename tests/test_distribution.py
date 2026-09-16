@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_ID = "codex-maya"
 DISPLAY_NAME = "Codex Maya"
-REPOSITORY = "https://github.com/partme-ai/codex-maya-plugin"
+REPOSITORY = "https://github.com/partme-ai/partme-maya-plugin"
 BRAND_COLOR = "#14B8A6"
 
 def load_json(relative: str) -> dict:
