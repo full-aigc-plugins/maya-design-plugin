@@ -1,6 +1,6 @@
 # Maya Runtime Matrix (2026-09-12)
 
-This document records the runtime compatibility status of the Codex Maya
+This document records the runtime compatibility status of the Autodesk Maya Design
 plugin. The plugin's design assumes a real Autodesk Maya install lives on
 the user's machine; the offline suite cannot exercise the runtime, so this
 matrix is filled in incrementally when an authorized Maya runtime is

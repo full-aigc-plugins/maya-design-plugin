@@ -1,4 +1,4 @@
-"""Distribution-level checks for the Codex Maya plugin.
+"""Distribution-level checks for the Autodesk Maya Design plugin.
 
 Extends the foundation checks in `tests/test_distribution.py`. The original
 file guards identity, marketplace, structure, brand assets, and the
@@ -63,13 +63,13 @@ class GitHubSourceTests(unittest.TestCase):
 class PluginIdentityTests(unittest.TestCase):
     def test_identity_and_version(self) -> None:
         manifest = _load_json(".codex-plugin/plugin.json")
-        self.assertEqual(manifest["name"], "codex-maya")
+        self.assertEqual(manifest["name"], "maya-design")
         self.assertEqual(manifest["version"], "0.1.0")
         self.assertFalse(any(c in manifest["name"] for c in (" ", "\t")))
 
     def test_display_name_present(self) -> None:
         manifest = _load_json(".codex-plugin/plugin.json")
-        self.assertEqual(manifest["interface"]["displayName"], "Codex Maya")
+        self.assertEqual(manifest["interface"]["displayName"], "Autodesk Maya Design")
 
 
 class SkillsPresenceTests(unittest.TestCase):
@@ -96,7 +96,7 @@ class SchemasTests(unittest.TestCase):
         for relative in SCHEMAS:
             with self.subTest(schema=relative):
                 schema = _load_json(relative)
-                self.assertEqual(schema["properties"]["plugin_id"]["const"], "codex-maya")
+                self.assertEqual(schema["properties"]["plugin_id"]["const"], "maya-design")
                 self.assertEqual(schema["properties"]["schema_version"]["const"], "1.0.0")
                 self.assertIn("schema_version", schema["required"])
                 ids.add(id(schema))
@@ -196,7 +196,7 @@ class ValidatorPipelineTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("validated codex-maya", result.stdout)
+        self.assertIn("validated maya-design", result.stdout)
 
 
 if __name__ == "__main__":

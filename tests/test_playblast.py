@@ -1,4 +1,4 @@
-"""Playblast + vendor-integrity tests for the Codex Maya bridge.
+"""Playblast + vendor-integrity tests for the Autodesk Maya Design bridge.
 
 The bridge wraps the vendored Jimeng/Dreamina Maya uploader. Tests are
 hermetic: a fake `maya.cmds` covers all snapshot/restore touchpoints, and the
@@ -226,7 +226,7 @@ class ExportPlayblastTests(unittest.TestCase):
         self.assertEqual(errors, [], f"receipt invalid: {[e.message for e in errors]}")
         self.assertEqual(receipt["display_mode"], "white_model")
         self.assertEqual(receipt["restoration_status"], "restored")
-        self.assertEqual(receipt["plugin_id"], "codex-maya")
+        self.assertEqual(receipt["plugin_id"], "maya-design")
         self.assertNotIn("redirect_url", receipt)
         self.assertNotIn("resource_info_url", receipt)
 

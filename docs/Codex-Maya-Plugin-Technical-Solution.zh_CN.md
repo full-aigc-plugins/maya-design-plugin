@@ -1,4 +1,4 @@
-# Codex Maya 插件技术方案
+# Autodesk Maya Design 插件技术方案
 
 > **文档信息**
 >

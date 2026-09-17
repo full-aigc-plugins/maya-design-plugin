@@ -79,7 +79,7 @@ python3 scripts/maya_runner.py inspect --scene <path>     ← 你调用的
 导出前自检清单（checklist）：
 
 - [ ] `scene_id` 是 UUID v4 形状
-- [ ] `plugin_id` 等于 `codex-maya`，`schema_version` 等于 `1.0.0`
+- [ ] `plugin_id` 等于 `maya-design`，`schema_version` 等于 `1.0.0`
 - [ ] `display_mode` ∈ {`white_model`, `material_preview`, `existing_video`}
 - [ ] `resolution.width` 与 `resolution.height` 都 ≥ 1
 - [ ] `frame_range.start <= frame_range.end`

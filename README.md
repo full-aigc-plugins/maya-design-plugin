@@ -1,8 +1,8 @@
-# Codex Maya Plugin
+# Autodesk Maya Design Plugin
 
 ![Codex × Maya — Automate scenes with reviewable previews](assets/maya-hero.png)
 
-<img src="assets/logo.png" alt="Codex Maya logo" width="128">
+<img src="assets/logo.png" alt="Autodesk Maya Design logo" width="128">
 
 > Inspect an authorized Maya scene, capture a reversible Playblast, and return a Jimeng link through the official uploader — with the scene state restored afterwards.
 
@@ -13,7 +13,7 @@
 
 ## Positioning
 
-`codex-maya` inspects an authorized Autodesk Maya scene, snapshots the observable state it is about to change, produces a white-model or material-aware Playblast, validates the resulting media, and restores every value it touched. An ephemeral Jimeng link can be requested through the official uploader, and it is returned only in the response that you explicitly authorized.
+`maya-design` inspects an authorized Autodesk Maya scene, snapshots the observable state it is about to change, produces a white-model or material-aware Playblast, validates the resulting media, and restores every value it touched. An ephemeral Jimeng link can be requested through the official uploader, and it is returned only in the response that you explicitly authorized.
 
 The plugin is a guarded runner, not a Maya reimplementation: it discovers `mayapy`, calls it through argv, and keeps local-bridge tokens out of the stable receipts.
 
@@ -39,7 +39,7 @@ Authorized Maya scene
       │
       ▼
 ┌──────────────────────────────────────────────────────────┐
-│ codex-maya                                               │
+│ maya-design                                               │
 │  ① authorize  confirm the scene and the requested scope  │
 │  ② snapshot   record every value about to change         │
 │  ③ playblast  camera render or existing-video link       │
@@ -54,7 +54,7 @@ Validated Playblast media + restoration receipt
 
 | Property | Value |
 |---|---|
-| Plugin ID | `codex-maya` |
+| Plugin ID | `maya-design` |
 | Host | Codex CLI or ChatGPT desktop app |
 | Current version | `0.1.0` |
 | Plugin manifest | `.codex-plugin/plugin.json` |
@@ -139,7 +139,7 @@ Out of scope: Maya versions before 2022, and a Linux Maya installation that has 
 
 ```bash
 codex plugin marketplace add partme-ai/partme-maya-plugin --ref main
-codex plugin add codex-maya@partme-ai-maya
+codex plugin add maya-design@partme-ai-maya
 ```
 
 Restart Codex or the ChatGPT desktop app, then open a new task so the Skills load.
@@ -153,7 +153,7 @@ codex plugin list
 Expected entry:
 
 ```text
-codex-maya@partme-ai-maya  installed, enabled
+maya-design@partme-ai-maya  installed, enabled
 ```
 
 Then ask Codex to run the Maya diagnostics skill. It reports what it found, and reports a typed failure code when Maya is absent, instead of guessing.

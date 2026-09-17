@@ -27,7 +27,7 @@ import uuid
 from pathlib import Path
 from typing import Any, Iterator, Mapping
 
-PLUGIN_ID = "codex-maya"
+PLUGIN_ID = "maya-design"
 SCHEMA_VERSION = "1.0.0"
 DISPLAY_MODES = frozenset({"white_model", "material_preview", "existing_video"})
 JIMENG_VENDOR_DIR = Path(__file__).resolve().parent / "jimeng_third_party" / "jimeng_maya_uploader"

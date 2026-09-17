@@ -1,6 +1,6 @@
 """Discover a Maya runtime and drive one request through it.
 
-This module is the only path through which `codex-maya` reaches the Maya
+This module is the only path through which `maya-design` reaches the Maya
 binary. It has two halves:
 
 * **discovery** -- ``discover_maya`` locates ``mayapy`` and reports the Maya

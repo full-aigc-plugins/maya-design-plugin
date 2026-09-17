@@ -133,7 +133,7 @@ class InspectRoundTripTests(_DriverCase):
             {"action": "inspect", "scene_path": "scenes/hero.ma"},
             timeout=30,
         )
-        self.assertEqual(result["plugin_id"], "codex-maya")
+        self.assertEqual(result["plugin_id"], "maya-design")
         self.assertEqual(result["schema_version"], "1.0.0")
         self.assertEqual(result["approved_camera"], "camera1")
         self.assertEqual(result["frame_range"], {"start": 1, "end": 240, "current": 12})

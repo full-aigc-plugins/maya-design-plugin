@@ -1,6 +1,6 @@
-# Codex Maya 安装、授权与使用指南
+# Autodesk Maya Design 安装、授权与使用指南
 
-<p align="center"><img src="../assets/logo.png" alt="Codex Maya" width="120"></p>
+<p align="center"><img src="../assets/logo.png" alt="Autodesk Maya Design" width="120"></p>
 
 ## 快速开始
 
@@ -31,11 +31,11 @@ C:\Program Files\Autodesk\Maya2026
 
 ```bash
 codex plugin marketplace add https://github.com/partme-ai/partme-maya-plugin.git --ref main
-codex plugin add codex-maya@partme-ai-maya
+codex plugin add maya-design@partme-ai-maya
 codex plugin list --available --json
 ```
 
-看到 `codex-maya` 后新建一个 Codex 任务。使用 Codex 流程时，不需要另行运行即梦官方
+看到 `maya-design` 后新建一个 Codex 任务。使用 Codex 流程时，不需要另行运行即梦官方
 `install_maya_plugin.command/.bat`；官方 Python 模块已在本插件中按校验和原样 vendoring。
 
 ### 第 3 步：准备场景

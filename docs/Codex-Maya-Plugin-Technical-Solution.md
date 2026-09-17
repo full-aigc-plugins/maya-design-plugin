@@ -1,4 +1,4 @@
-# Codex Maya Plugin Technical Solution
+# Autodesk Maya Design Plugin Technical Solution
 
 > **Document control**
 >

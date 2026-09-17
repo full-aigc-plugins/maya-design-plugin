@@ -1,4 +1,4 @@
-"""Contract tests for the Codex Maya plugin foundation.
+"""Contract tests for the Autodesk Maya Design plugin foundation.
 
 These tests guard the shared identity, schemas, and receipt shapes that the rest
 of the plugin (probe, bridge, Playblast, media diagnostics, Skills, distribution)
@@ -16,8 +16,8 @@ from jsonschema import Draft202012Validator
 from jsonschema.exceptions import SchemaError, ValidationError
 
 ROOT = Path(__file__).resolve().parents[1]
-PLUGIN_ID = "codex-maya"
-DISPLAY_NAME = "Codex Maya"
+PLUGIN_ID = "maya-design"
+DISPLAY_NAME = "Autodesk Maya Design"
 SCHEMA_VERSION = "1.0.0"
 SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 UUID_V4_PATTERN = re.compile(

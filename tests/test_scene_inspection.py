@@ -62,7 +62,7 @@ class InspectSceneHappyPathTests(unittest.TestCase):
     def test_receipt_carries_locked_identity(self) -> None:
         receipt = maya_bridge.inspect_scene(self.fake, _scene_path())
         self.assertEqual(receipt["schema_version"], "1.0.0")
-        self.assertEqual(receipt["plugin_id"], "codex-maya")
+        self.assertEqual(receipt["plugin_id"], "maya-design")
         self.assertEqual(receipt["approved_camera"], "camera1")
 
     def test_receipt_includes_all_lists(self) -> None:

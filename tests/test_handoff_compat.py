@@ -1,12 +1,12 @@
-"""codex-maya -> codex-dreamina-3d handoff compatibility.
+"""maya-design -> codex-dreamina-3d handoff compatibility.
 
 The plan's Task 7 requires: "Confirm output receipt compatibility against the
 same fixtures used by `codex-dreamina-3d`."
 
-`codex-dreamina-3d` does not consume `codex-maya`'s own artifact receipt. It
+`codex-dreamina-3d` does not consume `maya-design`'s own artifact receipt. It
 discovers companions with `scripts/capability_probe.py` and validates an
 incoming preview receipt with `scripts/handoff_validator.py`. Before this
-module existed, `codex-maya` had neither `receipt_contract_versions` in its
+module existed, `maya-design` had neither `receipt_contract_versions` in its
 manifest nor a `bin/maya_adapter`, so `discover_companions` returned `[]` and
 the handoff could not start at all.
 
@@ -92,7 +92,7 @@ class ReceiptShapeTests(_HandoffCase):
     def test_identity_and_constants(self) -> None:
         receipt = self._receipt()
         self.assertEqual(receipt["schema_version"], "1.0.0")
-        self.assertEqual(receipt["producer_plugin"], "codex-maya")
+        self.assertEqual(receipt["producer_plugin"], "maya-design")
         self.assertEqual(receipt["producer_version"], "0.1.0")
         self.assertEqual(receipt["codec"], "h264")
         self.assertEqual(receipt["container"], "mp4")
@@ -112,7 +112,7 @@ class ReceiptShapeTests(_HandoffCase):
         self.assertEqual(self._receipt()["bytes"], self.media.stat().st_size)
 
     def test_restoration_status_is_confirmed_not_restored(self) -> None:
-        # codex-maya's internal receipt says "restored"; the consumer requires
+        # maya-design's internal receipt says "restored"; the consumer requires
         # the literal "confirmed". The adapter is the translation point.
         self.assertEqual(self._receipt()["restoration"]["status"], "confirmed")
 
@@ -246,11 +246,11 @@ class RealCapabilityProbeTests(_HandoffCase, CrossRepoSibling):
         # executable at bin/maya_adapter.
         root = self.tmp / "root"
         root.mkdir()
-        (root / "codex-maya").symlink_to(ROOT)
+        (root / "maya-design").symlink_to(ROOT)
 
         companions = self.probe.discover_companions([root])
-        maya = [c for c in companions if c.plugin_id == "codex-maya"]
-        self.assertEqual(len(maya), 1, f"codex-maya not discovered: {companions}")
+        maya = [c for c in companions if c.plugin_id == "maya-design"]
+        self.assertEqual(len(maya), 1, f"maya-design not discovered: {companions}")
         companion = maya[0]
         self.assertTrue(companion.is_callable, "adapter is not executable")
         self.assertEqual(companion.version, "0.1.0")

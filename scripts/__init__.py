@@ -1,1 +1,1 @@
-"""Codex Maya plugin scripts package."""
+"""Autodesk Maya Design plugin scripts package."""

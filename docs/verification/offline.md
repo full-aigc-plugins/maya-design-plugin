@@ -1,6 +1,6 @@
 # Offline Verification (2026-09-12)
 
-The Codex Maya plugin ships a hermetic offline suite that exercises every
+The Autodesk Maya Design plugin ships a hermetic offline suite that exercises every
 component without invoking a real Maya install. This document records the
 exact commands and expected outputs.
 

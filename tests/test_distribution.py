@@ -6,10 +6,10 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-PLUGIN_ID = "codex-maya"
-DISPLAY_NAME = "Codex Maya"
+PLUGIN_ID = "maya-design"
+DISPLAY_NAME = "Autodesk Maya Design"
 REPOSITORY = "https://github.com/partme-ai/partme-maya-plugin"
-BRAND_COLOR = "#14B8A6"
+BRAND_COLOR = "#37A5CC"
 
 def load_json(relative: str) -> dict:
     target = ROOT / relative
@@ -40,8 +40,8 @@ class DistributionTests(unittest.TestCase):
         interface = manifest["interface"]
         self.assertEqual(interface["displayName"], DISPLAY_NAME)
         self.assertEqual(interface["brandColor"], BRAND_COLOR)
-        self.assertEqual(interface["logo"], "./assets/logo.png")
-        self.assertEqual(interface["logoDark"], "./assets/logo-dark.png")
+        self.assertEqual(interface["logo"], "./assets/official-logo.png")
+        self.assertEqual(interface["logoDark"], "./assets/official-logo.png")
         self.assertEqual(interface["composerIcon"], "./assets/composer-icon.png")
         self.assertLessEqual(len(interface["defaultPrompt"]), 3)
         self.assertTrue(all(len(prompt) <= 128 for prompt in interface["defaultPrompt"]))
@@ -58,8 +58,7 @@ class DistributionTests(unittest.TestCase):
             self.assertTrue((ROOT / filename).is_file(), filename)
         self.assertFalse((ROOT / "plugin.json").exists())
         self.assertFalse((ROOT / "mcp.json").exists())
-        self.assertEqual(png_shape("assets/logo.png"), (1024, 1024, 6))
-        self.assertEqual(png_shape("assets/logo-dark.png"), (1024, 1024, 6))
+        self.assertEqual(png_shape("assets/official-logo.png"), (1024, 1024, 6))
         self.assertEqual(png_shape("assets/composer-icon.png"), (256, 256, 6))
 
 if __name__ == "__main__":

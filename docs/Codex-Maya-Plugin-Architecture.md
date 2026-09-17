@@ -1,4 +1,4 @@
-# Codex Maya Plugin Architecture
+# Autodesk Maya Design Plugin Architecture
 
 > **Document control**
 >
@@ -13,7 +13,7 @@
 
 ## 1. Executive summary
 
-`codex-maya` inspects an authorized Autodesk Maya scene, snapshots every value it is about to change, produces a white-model or material-aware Playblast, validates the resulting media without an external probe, and restores what it touched. A Jimeng link can be requested through the official uploader, and it is returned only in the response the user explicitly authorized.
+`maya-design` inspects an authorized Autodesk Maya scene, snapshots every value it is about to change, produces a white-model or material-aware Playblast, validates the resulting media without an external probe, and restores what it touched. A Jimeng link can be requested through the official uploader, and it is returned only in the response the user explicitly authorized.
 
 The plugin is a guarded runner: it discovers `mayapy`, invokes it through argv, and keeps bridge tokens out of stable receipts. It does not upload to Dreamina; `codex-dreamina-3d` owns that orchestration.
 

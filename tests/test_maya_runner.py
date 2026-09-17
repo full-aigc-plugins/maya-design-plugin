@@ -21,7 +21,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import maya_runner  # noqa: E402  - intentional after sys.path injection
 
-PLUGIN_ID = "codex-maya"
+PLUGIN_ID = "maya-design"
 
 
 def _write_executable(target: Path, body: str) -> Path:

@@ -1,7 +1,7 @@
 {
-  "name": "maya",
+  "name": "maya-design",
   "version": "0.1.0",
-  "description": "Inspect Autodesk Maya scenes, create reversible Playblasts, and return a Jimeng link through the official uploader.",
+  "description": "Inspect Autodesk Maya scenes, create reversible Playblasts, and produce verified Jimeng links.",
   "author": {
     "name": "Full Stack Skills / PartMe.AI"
   },
@@ -13,8 +13,8 @@
     "playblast"
   ],
   "interface": {
-    "displayName": "Maya",
-    "shortDescription": "Inspect Maya scenes and create safe Playblasts",
+    "displayName": "Autodesk Maya Design",
+    "shortDescription": "Inspect scenes and create reversible Playblasts",
     "longDescription": "Inspect Autodesk Maya scenes, create reversible Playblasts, and hand off to Jimeng through the official uploader. Ships read-only diagnostics and a guarded runtime preflight.",
     "developerName": "Full Stack Skills / PartMe.AI",
     "websiteURL": "https://github.com/partme-ai/partme-maya-plugin"

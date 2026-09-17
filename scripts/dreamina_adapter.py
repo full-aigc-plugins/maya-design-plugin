@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Receipt adapter consumed by codex-dreamina-3d after local preview validation.
 
-`codex-maya`'s own receipt (`schemas/artifact_receipt.schema.json`) is the
+`maya-design`'s own receipt (`schemas/artifact_receipt.schema.json`) is the
 plugin's internal record. `codex-dreamina-3d` does not consume that shape: it
 validates an incoming preview receipt with `scripts/handoff_validator.py`, which
 requires `producer_plugin` / `producer_version` / `path` / `sha256` / `codec` /
@@ -32,7 +32,7 @@ if str(PLUGIN_ROOT / "scripts") not in sys.path:
 import maya_runner  # noqa: E402  - after sys.path injection
 import media_probe  # noqa: E402
 
-PRODUCER_PLUGIN = "codex-maya"
+PRODUCER_PLUGIN = "maya-design"
 PRODUCER_VERSION = "0.1.0"
 SCHEMA_VERSION = "1.0.0"
 CONTRACT_VERSION = "1.0.0"
@@ -49,7 +49,7 @@ MAX_FPS = 120.0
 MAX_DURATION_SECONDS = 60.0
 PREVIEW_MODES = ("camera_render", "local_video")
 
-# codex-maya's own display_mode -> the consumer's preview_mode.
+# maya-design's own display_mode -> the consumer's preview_mode.
 _DISPLAY_TO_PREVIEW = {
     "white_model": "camera_render",
     "material_preview": "camera_render",
@@ -160,7 +160,7 @@ def build_preview_receipt(
         "camera": {"name": camera_name},
         "frame_range": {"start": start, "end": end},
         "preview_mode": preview_mode,
-        # The consumer requires exactly "confirmed". codex-maya only reaches
+        # The consumer requires exactly "confirmed". maya-design only reaches
         # this point when the driver's outer verification pass found no drift
         # (otherwise RESTORE_UNCONFIRMED was raised and we never got here).
         "restoration": {"status": "confirmed", "evidence": restoration_evidence},
@@ -239,7 +239,7 @@ def run_export(request: Mapping[str, object], *, output: Path, explicit_root: st
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(
-        description="codex-dreamina-3d preview adapter for codex-maya"
+        description="codex-dreamina-3d preview adapter for maya-design"
     )
     parser.add_argument("--request")
     parser.add_argument("--receipt", required=True)

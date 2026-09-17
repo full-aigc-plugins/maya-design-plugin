@@ -1,8 +1,8 @@
-# Codex Maya 插件
+# Autodesk Maya Design 插件
 
 ![Codex × Maya — 用可审阅预览自动化场景](assets/maya-hero.png)
 
-<img src="assets/logo.png" alt="Codex Maya Logo" width="128">
+<img src="assets/logo.png" alt="Autodesk Maya Design Logo" width="128">
 
 > 检查已授权的 Maya 场景、抓取可恢复的 Playblast、通过官方上传器返回即梦链接——并在结束后还原场景状态。
 
@@ -13,7 +13,7 @@
 
 ## 项目定位
 
-`codex-maya` 检查已授权的 Autodesk Maya 场景，先对即将改动的可观测状态做快照，再生成白模或材质 Playblast，校验产出的媒体，最后把它碰过的每个值都还原回去。即梦链接可以通过官方上传器按需申请，且只在你明确授权的那一次响应中返回。
+`maya-design` 检查已授权的 Autodesk Maya 场景，先对即将改动的可观测状态做快照，再生成白模或材质 Playblast，校验产出的媒体，最后把它碰过的每个值都还原回去。即梦链接可以通过官方上传器按需申请，且只在你明确授权的那一次响应中返回。
 
 插件是受控执行器，不是 Maya 的重实现：它发现 `mayapy`、用 argv 调用它，并把本地桥接 token 挡在稳定回执之外。
 
@@ -39,7 +39,7 @@
       │
       ▼
 ┌──────────────────────────────────────────────────────────┐
-│ codex-maya                                               │
+│ maya-design                                               │
 │  ① authorize  确认场景与请求范围                         │
 │  ② snapshot   记录即将改动的每个值                       │
 │  ③ playblast  相机渲染或已有视频链接                     │
@@ -54,7 +54,7 @@
 
 | 项目属性 | 值 |
 |---|---|
-| 插件 ID | `codex-maya` |
+| 插件 ID | `maya-design` |
 | 宿主 | Codex CLI 或 ChatGPT 桌面应用 |
 | 当前版本 | `0.1.0` |
 | 插件清单 | `.codex-plugin/plugin.json` |
@@ -139,7 +139,7 @@ flowchart LR
 
 ```bash
 codex plugin marketplace add partme-ai/partme-maya-plugin --ref main
-codex plugin add codex-maya@partme-ai-maya
+codex plugin add maya-design@partme-ai-maya
 ```
 
 重启 Codex 或 ChatGPT 桌面应用，然后新建任务以加载 Skills。
@@ -153,7 +153,7 @@ codex plugin list
 预期条目：
 
 ```text
-codex-maya@partme-ai-maya  installed, enabled
+maya-design@partme-ai-maya  installed, enabled
 ```
 
 然后让 Codex 运行 Maya 诊断 Skill。它会如实报告发现结果；Maya 缺失时返回带类型的失败码，而不是猜测。

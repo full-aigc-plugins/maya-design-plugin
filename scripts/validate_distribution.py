@@ -64,8 +64,8 @@ def validate(root: Path) -> list[str]:
     marketplace = load_json(marketplace_path)
     plugin_id = manifest.get("name", "")
     repository = manifest.get("repository", "")
-    if NAME_PATTERN.fullmatch(plugin_id) is None or not plugin_id.startswith("codex-"):
-        errors.append("manifest name must be a codex-prefixed kebab-case identifier")
+    if NAME_PATTERN.fullmatch(plugin_id) is None:
+        errors.append("manifest name must be a kebab-case identifier")
     if manifest.get("version") != "0.1.0":
         errors.append("foundation version must be 0.1.0")
     if manifest.get("skills") != "./skills/":
@@ -101,8 +101,7 @@ def validate(root: Path) -> list[str]:
         errors.append("portable manifests must remain inactive during compatibility-first scaffolding")
 
     expected_assets = {
-        "assets/logo.png": (1024, 1024, 6),
-        "assets/logo-dark.png": (1024, 1024, 6),
+        "assets/official-logo.png": (1024, 1024, 6),
         "assets/composer-icon.png": (256, 256, 6),
     }
     for filename, expected in expected_assets.items():
@@ -150,4 +149,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

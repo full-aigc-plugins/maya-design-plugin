@@ -3,8 +3,8 @@ name: maya-seedance-pipeline
 description: Drive a Maya Playblast through the validated Dreamina 3D pipeline. Use when the user has a Maya scene and wants a Seedance 2.5 render from it.
 metadata:
   type: workflow
-  plugin: codex-maya
-  source_dcc: codex-maya
+  plugin: maya-design
+  source_dcc: maya-design
   status: experimental
 ---
 
@@ -24,7 +24,7 @@ here.
 
 Identical to `blender-seedance-pipeline` (partme-blender-plugin), but:
 
-1. **Source DCC.** `codex-maya` — preview mode defaults to `local_video`.
+1. **Source DCC.** `maya-design` — preview mode defaults to `local_video`.
 2. **Restore state.** Confirm the Maya adapter reports
    `restoration.status == 'confirmed'`. Reject otherwise.
 3. **Camera.** Maya cameras often have `*Shape` suffixes; pass through the

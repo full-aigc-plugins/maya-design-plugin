@@ -1,7 +1,7 @@
 {
-  "name": "codex-maya",
+  "name": "maya-design",
   "version": "0.1.0",
-  "description": "Inspect Autodesk Maya scenes, create reversible Playblasts, and return a Jimeng link through the official uploader.",
+  "description": "Inspect Autodesk Maya scenes, create reversible Playblasts, and produce verified Jimeng links.",
   "author": {
     "name": "Full Stack Skills / PartMe.AI",
     "url": "https://github.com/partme-ai"
@@ -21,8 +21,8 @@
     "1.0.0"
   ],
   "interface": {
-    "displayName": "Codex Maya",
-    "shortDescription": "Create safe Maya Playblasts and Jimeng links",
+    "displayName": "Autodesk Maya Design",
+    "shortDescription": "Inspect scenes and create reversible Playblasts",
     "longDescription": "Inspect Maya scenes and reuse the official Jimeng uploader for reversible Playblast or existing-video links, with explicit authorization, media validation, diagnostics, and temporary-state restoration.",
     "developerName": "Full Stack Skills / PartMe.AI",
     "category": "Creativity",
@@ -39,10 +39,10 @@
       "Create a safe Playblast, restore the Maya scene, and make a Jimeng link",
       "Diagnose this Maya preview failure without installing software"
     ],
-    "brandColor": "#14B8A6",
+    "brandColor": "#37A5CC",
     "composerIcon": "./assets/composer-icon.png",
-    "logo": "./assets/logo.png",
-    "logoDark": "./assets/logo-dark.png",
+    "logo": "./assets/official-logo.png",
+    "logoDark": "./assets/official-logo.png",
     "screenshots": []
   }
 }

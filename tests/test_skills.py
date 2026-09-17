@@ -1,4 +1,4 @@
-"""Validate the four Codex Maya Agent Skills.
+"""Validate the four Autodesk Maya Design Agent Skills.
 
 Tests are static and hermetic: they parse each `SKILL.md`'s frontmatter,
 assert required keys, and assert that the description text distinguishes
