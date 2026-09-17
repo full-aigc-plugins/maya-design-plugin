@@ -158,6 +158,31 @@ maya-design@partme-ai-maya  installed, enabled
 
 Then ask Codex to run the Maya diagnostics skill. It reports what it found, and reports a typed failure code when Maya is absent, instead of guessing.
 
+### China mirror (AtomGit)
+
+If GitHub is slow or unreachable, install from the AtomGit mirror instead. The
+commands are identical apart from the marketplace URL:
+
+```bash
+codex plugin marketplace add https://atomgit.com/partme-ai/partme-maya-plugin.git --ref main
+codex plugin add maya-design@partme-ai-maya
+```
+
+To install the whole partme-ai plugin catalog from the mirror in one step:
+
+```bash
+codex plugin marketplace add https://atomgit.com/partme-ai/plugins.git
+codex plugin add maya-design@partme-ai-maya
+```
+
+Notes:
+
+- The AtomGit source and the GitHub source share marketplace names, so adding
+  one replaces the other. Switch back with
+  `codex plugin marketplace add https://github.com/partme-ai/plugins.git`.
+- For ZCode or Kimi, clone the mirror repository and register the local
+  directory in the respective marketplace configuration.
+
 ## Quick start
 
 ### 1. Authorize a scene
