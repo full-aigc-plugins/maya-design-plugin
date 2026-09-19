@@ -101,21 +101,27 @@ class MacOSRangeTests(unittest.TestCase):
 
     def test_flags_a_macos_above_the_documented_range(self) -> None:
         original = maya_preflight._macos_version
+        original_platform = maya_preflight.sys.platform
         maya_preflight._macos_version = lambda: (26, 6, 2)
+        maya_preflight.sys.platform = "darwin"
         try:
             info = maya_preflight._report_environment()
         finally:
             maya_preflight._macos_version = original
+            maya_preflight.sys.platform = original_platform
         self.assertIn("macos_outside_documented_range", info)
         self.assertIn("13", info["macos_outside_documented_range"])
 
     def test_does_not_flag_a_documented_version(self) -> None:
         original = maya_preflight._macos_version
+        original_platform = maya_preflight.sys.platform
         maya_preflight._macos_version = lambda: (14, 5, 0)
+        maya_preflight.sys.platform = "darwin"
         try:
             info = maya_preflight._report_environment()
         finally:
             maya_preflight._macos_version = original
+            maya_preflight.sys.platform = original_platform
         self.assertNotIn("macos_outside_documented_range", info)
 
 
