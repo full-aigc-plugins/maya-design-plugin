@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_ID = "maya-design"
 DISPLAY_NAME = "Autodesk Maya Design"
-REPOSITORY = "https://github.com/partme-ai/partme-maya-plugin"
+REPOSITORY = "https://github.com/full-aigc-plugins/maya-design-plugin"
 BRAND_COLOR = "#37A5CC"
 
 def load_json(relative: str) -> dict:
@@ -32,7 +32,7 @@ class DistributionTests(unittest.TestCase):
     def test_manifest_and_marketplace(self) -> None:
         manifest = load_json(".codex-plugin/plugin.json")
         self.assertEqual(manifest["name"], PLUGIN_ID)
-        self.assertEqual(manifest["version"].split("+", 1)[0], "0.1.3")
+        self.assertEqual(manifest["version"].split("+", 1)[0], "0.1.4")
         self.assertEqual(manifest["repository"], REPOSITORY)
         self.assertEqual(manifest["skills"], "./skills/")
         self.assertIn("Jimeng link", manifest["description"])
@@ -48,7 +48,7 @@ class DistributionTests(unittest.TestCase):
         marketplace = load_json(".agents/plugins/marketplace.json")
         entries = [entry for entry in marketplace["plugins"] if entry["name"] == PLUGIN_ID]
         self.assertEqual(len(entries), 1)
-        self.assertEqual(entries[0]["source"], {"source": "url", "url": REPOSITORY + ".git", "ref": "main"})
+        self.assertEqual(entries[0]["source"], {"source": "url", "url": REPOSITORY + ".git", "ref": "v0.1.4"})
         self.assertEqual(entries[0]["policy"], {"installation": "AVAILABLE", "authentication": "ON_USE"})
 
     def test_structure_legal_and_brand_assets(self) -> None:

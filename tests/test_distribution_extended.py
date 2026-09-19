@@ -53,20 +53,20 @@ SKILLS = tuple(sorted(set(LOCKED_SKILLS) | set(LOCAL_SKILLS)))
 class GitHubSourceTests(unittest.TestCase):
     def test_repository_field_points_to_github(self) -> None:
         manifest = _load_json(".codex-plugin/plugin.json")
-        self.assertEqual(manifest["repository"], "https://github.com/partme-ai/partme-maya-plugin")
+        self.assertEqual(manifest["repository"], "https://github.com/full-aigc-plugins/maya-design-plugin")
         marketplace = _load_json(".agents/plugins/marketplace.json")
         source = next(
             entry for entry in marketplace["plugins"] if entry["name"] == manifest["name"]
         )["source"]
-        self.assertEqual(source["url"], "https://github.com/partme-ai/partme-maya-plugin.git")
-        self.assertEqual(source["ref"], "main")
+        self.assertEqual(source["url"], "https://github.com/full-aigc-plugins/maya-design-plugin.git")
+        self.assertEqual(source["ref"], "v0.1.4")
 
 
 class PluginIdentityTests(unittest.TestCase):
     def test_identity_and_version(self) -> None:
         manifest = _load_json(".codex-plugin/plugin.json")
         self.assertEqual(manifest["name"], "maya-design")
-        self.assertEqual(manifest["version"].split("+", 1)[0], "0.1.3")
+        self.assertEqual(manifest["version"].split("+", 1)[0], "0.1.4")
         self.assertFalse(any(c in manifest["name"] for c in (" ", "\t")))
 
     def test_display_name_present(self) -> None:

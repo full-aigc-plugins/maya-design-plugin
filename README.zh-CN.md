@@ -6,7 +6,7 @@
 
 > 检查已授权的 Maya 场景、抓取可恢复的 Playblast、通过官方上传器返回即梦链接——并在结束后还原场景状态。
 
-[![版本](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/partme-ai/partme-maya-plugin)
+[![版本](https://img.shields.io/badge/version-0.1.4-blue)](https://github.com/full-aigc-plugins/maya-design-plugin/releases/tag/v0.1.4)
 [![许可证](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 
 [English](README.md) | [简体中文](README.zh-CN.md) · [安装](#安装) · [快速开始](#快速开始) · [运行契约](#运行契约) · [故障排查](#故障排查)
@@ -56,7 +56,7 @@
 |---|---|
 | 插件 ID | `maya-design` |
 | 宿主 | Codex CLI 或 ChatGPT 桌面应用 |
-| 当前版本 | `0.1.0` |
+| 当前版本 | `0.1.4` |
 | 插件清单 | `.codex-plugin/plugin.json` |
 | MCP 配置 | 无——Skills 通过 argv 调用 `mayapy` |
 | 主要语言 | Python 3.7+（与 Maya 内置 Python 对齐） |
@@ -90,7 +90,7 @@
 | 实验性 | 契约可能调整；依赖前请自行验证 |
 | 封锁 / NOT_RUN | 本机未验证；不得描述为可用 |
 
-**运行期诚实说明：** 离线函数级集成与其测试已经就绪，但真实 Maya 发现、真实 Playblast 抓取、真实浏览器交接，以及一次真实的 marketplace 安装往返，都已在 `docs/verification/` 中记录为**尚未验证**。请把 `0.1.0` 视为"已实现但运行期未验证"。
+**运行期诚实说明：** 离线函数级集成与其测试已经就绪，但真实 Maya 发现、真实 Playblast 抓取、真实浏览器交接，以及一次真实的 marketplace 安装往返，都已在 `docs/verification/` 中记录为**尚未验证**。`0.1.4` 继续引用历史 `0.1.0` 的“已实现但运行期未验证”证据，不把它表述为新的实机证明。
 
 ## 架构与核心流程
 
@@ -138,7 +138,7 @@ flowchart LR
 ### 从插件市场安装
 
 ```bash
-codex plugin marketplace add partme-ai/partme-maya-plugin --ref main
+codex plugin marketplace add full-aigc-plugins/maya-design-plugin --ref v0.1.4
 codex plugin add maya-design@partme-ai-maya
 ```
 
@@ -309,7 +309,7 @@ maya-plugin/
 
 ## 贡献与支持
 
-功能问题请提交到 <https://github.com/partme-ai/partme-maya-plugin/issues>。提交变更前，请说明你验证所用的 Maya 版本与 Python ABI、是否改动快照集合或回执结构，并附上受影响的测试。
+功能问题请提交到 <https://github.com/full-aigc-plugins/maya-design-plugin/issues>。提交变更前，请说明你验证所用的 Maya 版本与 Python ABI、是否改动快照集合或回执结构，并附上受影响的测试。
 
 ## 许可证
 

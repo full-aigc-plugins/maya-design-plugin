@@ -6,7 +6,7 @@
 
 > Inspect an authorized Maya scene, capture a reversible Playblast, and return a Jimeng link through the official uploader — with the scene state restored afterwards.
 
-[![Version](https://img.shields.io/badge/version-0.1.0-blue)](https://github.com/partme-ai/partme-maya-plugin)
+[![Version](https://img.shields.io/badge/version-0.1.4-blue)](https://github.com/full-aigc-plugins/maya-design-plugin/releases/tag/v0.1.4)
 [![License](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 
 [English](README.md) | [简体中文](README.zh-CN.md) · [Install](#installation) · [Quick start](#quick-start) · [Runtime contract](#runtime-contract) · [Troubleshooting](#troubleshooting)
@@ -56,7 +56,7 @@ Validated Playblast media + restoration receipt
 |---|---|
 | Plugin ID | `maya-design` |
 | Host | Codex CLI or ChatGPT desktop app |
-| Current version | `0.1.0` |
+| Current version | `0.1.4` |
 | Plugin manifest | `.codex-plugin/plugin.json` |
 | MCP configuration | none — Skills invoke `mayapy` through argv |
 | Primary language | Python 3.7+ (matching Maya's embedded Python) |
@@ -90,7 +90,7 @@ Validated Playblast media + restoration receipt
 | Experimental | Contract may change; verify before relying on it |
 | Blocked / NOT_RUN | Not verified on this host; never present it as working |
 
-**Runtime honesty:** the offline function-level integration and its tests exist, but real Maya discovery, real Playblast capture, the real browser hand-off, and a live marketplace install round-trip are all recorded as **not yet verified** in `docs/verification/`. Treat `0.1.0` as an implemented-but-unverified runtime.
+**Runtime honesty:** the offline function-level integration and its tests exist, but real Maya discovery, real Playblast capture, the real browser hand-off, and a live marketplace install round-trip are all recorded as **not yet verified** in `docs/verification/`. Release `0.1.4` therefore retains the historical `0.1.0` implemented-but-unverified runtime evidence rather than claiming fresh live proof.
 
 ## Architecture and core flow
 
@@ -138,7 +138,7 @@ Out of scope: Maya versions before 2022, and a Linux Maya installation that has 
 ### From the plugin marketplace
 
 ```bash
-codex plugin marketplace add partme-ai/partme-maya-plugin --ref main
+codex plugin marketplace add full-aigc-plugins/maya-design-plugin --ref v0.1.4
 codex plugin add maya-design@partme-ai-maya
 ```
 
@@ -312,7 +312,7 @@ maya-plugin/
 
 ## Contributing and support
 
-Open functional issues at <https://github.com/partme-ai/partme-maya-plugin/issues>. Before proposing a change, state the Maya version and Python ABI you verified against, whether it alters the snapshot set or the receipt shape, and include the affected tests.
+Open functional issues at <https://github.com/full-aigc-plugins/maya-design-plugin/issues>. Before proposing a change, state the Maya version and Python ABI you verified against, whether it alters the snapshot set or the receipt shape, and include the affected tests.
 
 ## License
 

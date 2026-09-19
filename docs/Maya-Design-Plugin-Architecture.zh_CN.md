@@ -183,7 +183,7 @@ python3 scripts/validate_distribution.py
 
 | 方面 | 立场 |
 |---|---|
-| 分发 | 指向本仓库、固定到 `main` 的 Codex marketplace 条目 |
+| 分发 | 指向本仓库、固定到不可变 `v0.1.4` 的跨宿主 marketplace 条目 |
 | Python | 3.7 或更新，与 Maya 内置解释器对齐 |
 | Maya | 2022 或更新；每个受支持的 OS/Maya/Python 组合都需要一次记录的运行测试 |
 | 范围之外 | 2022 之前的 Maya，以及没有显式 `MAYA_LOCATION` 的 Linux 安装 |

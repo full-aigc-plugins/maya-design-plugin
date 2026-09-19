@@ -183,7 +183,7 @@ The output receipt matches the media handoff contract used by `blender-design` a
 
 | Aspect | Position |
 |---|---|
-| Distribution | Codex marketplace entry pointing at this repository, pinned to `main` |
+| Distribution | Cross-host marketplace entry pointing at this repository, pinned to immutable `v0.1.4` |
 | Python | 3.7 or newer, matching Maya's embedded interpreter |
 | Maya | 2022 or newer; each supported OS/Maya/Python combination needs a recorded runtime test |
 | Out of scope | Maya before 2022, and a Linux install with no explicit `MAYA_LOCATION` |

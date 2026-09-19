@@ -6,8 +6,8 @@
     "name": "Full Stack Skills / PartMe.AI",
     "url": "https://github.com/partme-ai"
   },
-  "homepage": "https://github.com/partme-ai/partme-maya-plugin",
-  "repository": "https://github.com/partme-ai/partme-maya-plugin",
+  "homepage": "https://github.com/full-aigc-plugins/maya-design-plugin",
+  "repository": "https://github.com/full-aigc-plugins/maya-design-plugin",
   "license": "Apache-2.0",
   "keywords": [
     "maya",
@@ -31,9 +31,9 @@
       "Read",
       "Write"
     ],
-    "websiteURL": "https://github.com/partme-ai/partme-maya-plugin",
-    "privacyPolicyURL": "https://github.com/partme-ai/partme-maya-plugin/blob/main/PRIVACY.md",
-    "termsOfServiceURL": "https://github.com/partme-ai/partme-maya-plugin/blob/main/TERMS.md",
+    "websiteURL": "https://github.com/full-aigc-plugins/maya-design-plugin",
+    "privacyPolicyURL": "https://github.com/full-aigc-plugins/maya-design-plugin/blob/main/PRIVACY.md",
+    "termsOfServiceURL": "https://github.com/full-aigc-plugins/maya-design-plugin/blob/main/TERMS.md",
     "defaultPrompt": [
       "Inspect this Maya scene and summarize its cameras and timeline",
       "Create a safe Playblast, restore the Maya scene, and make a Jimeng link",
