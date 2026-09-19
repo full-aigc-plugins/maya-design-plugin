@@ -9,7 +9,7 @@
       "source": {
         "source": "url",
         "url": "https://github.com/partme-ai/partme-maya-plugin.git",
-        "ref": "main"
+        "ref": "v0.1.3"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -18,11 +18,11 @@
       "category": "Creativity",
       "version": "0.1.3",
       "description": "Inspect Autodesk Maya scenes, create reversible Playblasts, and produce verified Jimeng links.",
-      "icon": "https://raw.githubusercontent.com/partme-ai/partme-maya-plugin/main/assets/official-logo.png",
+      "icon": "https://cdn.jsdelivr.net/gh/full-aigc-plugins/maya-design-plugin@v0.1.3/assets/official-logo.png",
       "interface": {
         "displayName": "Autodesk Maya Design",
         "shortDescription": "Inspect scenes and create reversible Playblasts",
-        "logo": "https://raw.githubusercontent.com/partme-ai/partme-maya-plugin/main/assets/official-logo.png"
+        "logo": "https://cdn.jsdelivr.net/gh/full-aigc-plugins/maya-design-plugin@v0.1.3/assets/official-logo.png"
       }
     }
   ]
