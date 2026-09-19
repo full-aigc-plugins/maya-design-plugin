@@ -1,12 +1,12 @@
 # Autodesk Maya Design Plugin
 
-![Codex × Maya — Automate scenes with reviewable previews](assets/maya-hero.png)
+![Maya Design — Automate scenes with reviewable previews](assets/maya-hero.png)
 
 <img src="assets/logo.png" alt="Autodesk Maya Design logo" width="128">
 
 > Inspect an authorized Maya scene, capture a reversible Playblast, and return a Jimeng link through the official uploader — with the scene state restored afterwards.
 
-[![Version](https://img.shields.io/badge/version-0.1.4-blue)](https://github.com/full-aigc-plugins/maya-design-plugin/releases/tag/v0.1.4)
+[![Version](https://img.shields.io/badge/version-0.1.5-blue)](https://github.com/full-aigc-plugins/maya-design-plugin/releases/tag/v0.1.5)
 [![License](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 
 [English](README.md) | [简体中文](README.zh-CN.md) · [Install](#installation) · [Quick start](#quick-start) · [Runtime contract](#runtime-contract) · [Troubleshooting](#troubleshooting)
@@ -19,7 +19,7 @@ The plugin is a guarded runner, not a Maya reimplementation: it discovers `mayap
 
 ### Who it is for
 
-- Technical artists who want Codex to prepare reviewable previews without leaving the scene changed.
+- Technical artists who want their coding agent to prepare reviewable previews without leaving the scene changed.
 - Pipeline engineers who need an argv-only, diagnosable Maya automation path.
 - Reviewers who need receipts and state-restoration proof rather than a claim that a render happened.
 
@@ -56,7 +56,7 @@ Validated Playblast media + restoration receipt
 |---|---|
 | Plugin ID | `maya-design` |
 | Host | Codex CLI or ChatGPT desktop app |
-| Current version | `0.1.4` |
+| Current version | `0.1.5` |
 | Plugin manifest | `.codex-plugin/plugin.json` |
 | MCP configuration | none — Skills invoke `mayapy` through argv |
 | Primary language | Python 3.7+ (matching Maya's embedded Python) |
@@ -90,7 +90,7 @@ Validated Playblast media + restoration receipt
 | Experimental | Contract may change; verify before relying on it |
 | Blocked / NOT_RUN | Not verified on this host; never present it as working |
 
-**Runtime honesty:** the offline function-level integration and its tests exist, but real Maya discovery, real Playblast capture, the real browser hand-off, and a live marketplace install round-trip are all recorded as **not yet verified** in `docs/verification/`. Release `0.1.4` therefore retains the historical `0.1.0` implemented-but-unverified runtime evidence rather than claiming fresh live proof.
+**Runtime honesty:** the offline function-level integration and its tests exist, but real Maya discovery, real Playblast capture, the real browser hand-off, and a live marketplace install round-trip are all recorded as **not yet verified** in `docs/verification/`. Release `0.1.5` therefore retains the historical `0.1.0` implemented-but-unverified runtime evidence rather than claiming fresh live proof.
 
 ## Architecture and core flow
 
@@ -117,7 +117,7 @@ flowchart LR
 | `scripts/maya_bridge.py` | Inspection, Playblast, restoration, and the receipt shape | Package installation |
 | `scripts/maya_diagnostics.py` | Typed, path-safe diagnostics | Fixing the environment |
 | `scripts/media_probe.py` | MP4 container and codec validation | Transcoding |
-| `skills/` (4) | Routing, inspection, export, and diagnosis instructions for Codex | Runtime enforcement |
+| `skills/` (4) | Routing, inspection, export, and diagnosis instructions for supported hosts | Runtime enforcement |
 
 ## Compatibility
 
@@ -138,7 +138,7 @@ Out of scope: Maya versions before 2022, and a Linux Maya installation that has 
 ### From the plugin marketplace
 
 ```bash
-codex plugin marketplace add full-aigc-plugins/maya-design-plugin --ref v0.1.4
+codex plugin marketplace add full-aigc-plugins/maya-design-plugin --ref v0.1.5
 codex plugin add maya-design@partme-ai-maya
 ```
 

@@ -30,7 +30,7 @@ C:\Program Files\Autodesk\Maya2026
 ### 第 2 步：安装 Codex 插件
 
 ```bash
-codex plugin marketplace add https://github.com/full-aigc-plugins/maya-design-plugin.git --ref v0.1.4
+codex plugin marketplace add https://github.com/full-aigc-plugins/maya-design-plugin.git --ref v0.1.5
 codex plugin add maya-design@partme-ai-maya
 codex plugin list --available --json
 ```

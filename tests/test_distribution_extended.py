@@ -59,14 +59,14 @@ class GitHubSourceTests(unittest.TestCase):
             entry for entry in marketplace["plugins"] if entry["name"] == manifest["name"]
         )["source"]
         self.assertEqual(source["url"], "https://github.com/full-aigc-plugins/maya-design-plugin.git")
-        self.assertEqual(source["ref"], "v0.1.4")
+        self.assertEqual(source["ref"], "v0.1.5")
 
 
 class PluginIdentityTests(unittest.TestCase):
     def test_identity_and_version(self) -> None:
         manifest = _load_json(".codex-plugin/plugin.json")
         self.assertEqual(manifest["name"], "maya-design")
-        self.assertEqual(manifest["version"].split("+", 1)[0], "0.1.4")
+        self.assertEqual(manifest["version"].split("+", 1)[0], "0.1.5")
         self.assertFalse(any(c in manifest["name"] for c in (" ", "\t")))
 
     def test_display_name_present(self) -> None:
