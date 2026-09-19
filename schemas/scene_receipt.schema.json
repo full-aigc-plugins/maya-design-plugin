@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/partme-ai/partme-maya-plugin/schemas/scene_receipt.schema.json",
-  "title": "Codex Maya Scene Receipt",
+  "title": "Maya Design Scene Receipt",
   "description": "Read-only snapshot of an authorized Maya scene produced by maya-design before any mutation.",
   "type": "object",
   "additionalProperties": false,

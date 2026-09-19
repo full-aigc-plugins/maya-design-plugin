@@ -1,9 +1,9 @@
-"""maya-design -> codex-dreamina-3d handoff compatibility.
+"""maya-design -> dreamina-3d handoff compatibility.
 
 The plan's Task 7 requires: "Confirm output receipt compatibility against the
-same fixtures used by `codex-dreamina-3d`."
+same fixtures used by `dreamina-3d`."
 
-`codex-dreamina-3d` does not consume `maya-design`'s own artifact receipt. It
+`dreamina-3d` does not consume `maya-design`'s own artifact receipt. It
 discovers companions with `scripts/capability_probe.py` and validates an
 incoming preview receipt with `scripts/handoff_validator.py`. Before this
 module existed, `maya-design` had neither `receipt_contract_versions` in its
@@ -11,7 +11,7 @@ manifest nor a `bin/maya_adapter`, so `discover_companions` returned `[]` and
 the handoff could not start at all.
 
 These tests run the sibling's **real** code -- imported from
-`../codex-dreamina-3d-plugin/scripts/` -- rather than a re-implementation. A
+`../dreamina-3d-plugin/scripts/` -- rather than a re-implementation. A
 re-implementation would only prove that two copies of my own assumptions agree.
 Where the sibling repository is not checked out, the cross-repo tests skip with
 an explicit reason so the gap is visible rather than silently green.
@@ -37,7 +37,7 @@ import media_probe  # noqa: E402
 sys.path.insert(0, str(ROOT / "tests"))
 from test_media_probe import _build_minimal_mp4  # noqa: E402
 
-THREE_D = ROOT.parent / "codex-dreamina-3d-plugin"
+THREE_D = ROOT.parent / "dreamina-3d-plugin"
 THREE_D_SCRIPTS = THREE_D / "scripts"
 
 CONTRACT_KEYS = {
@@ -198,13 +198,13 @@ class CrossRepoSibling(unittest.TestCase):
     def setUpClass(cls) -> None:
         if not THREE_D_SCRIPTS.is_dir():
             raise unittest.SkipTest(
-                f"codex-dreamina-3d-plugin not checked out at {THREE_D}; "
+                f"dreamina-3d-plugin not checked out at {THREE_D}; "
                 "cross-repo handoff assertions did not run"
             )
 
 
 class RealValidatorTests(_HandoffCase, CrossRepoSibling):
-    """Run codex-dreamina-3d's own validator against a receipt we produced."""
+    """Run dreamina-3d's own validator against a receipt we produced."""
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -232,7 +232,7 @@ class RealValidatorTests(_HandoffCase, CrossRepoSibling):
 
 
 class RealCapabilityProbeTests(_HandoffCase, CrossRepoSibling):
-    """Run codex-dreamina-3d's own discovery against this checkout."""
+    """Run dreamina-3d's own discovery against this checkout."""
 
     @classmethod
     def setUpClass(cls) -> None:

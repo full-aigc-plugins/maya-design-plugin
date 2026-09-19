@@ -181,7 +181,7 @@ def _install_jimeng_stub(fake: FakePlayblastCmds, video_path: Path) -> _JimengSt
     ub_module.start_local_bridge = stub.start_local_bridge  # type: ignore[attr-defined]
     maya_bridge._import_jimeng_playblast = lambda: pb_module  # type: ignore[assignment]
     maya_bridge._import_jimeng_upload_bridge = lambda: ub_module  # type: ignore[assignment]
-    sys.modules.pop("_codex_maya_bridge_sessions", None)
+    sys.modules.pop("_maya_design_bridge_sessions", None)
     return stub
 
 

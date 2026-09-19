@@ -77,7 +77,7 @@ Validated Playblast media + restoration receipt
 
 ### Not responsible for
 
-- Uploading to Dreamina. `codex-dreamina-3d` owns that orchestration.
+- Uploading to Dreamina. `dreamina-3d` owns that orchestration.
 - Bundling Maya, codecs, vendor uploader source, or credentials. Vendored Python source is checksummed verbatim.
 - Installing Python packages to fix a `ModuleNotFoundError`. The plugin diagnoses the failure and reports it.
 - Claiming a verified live runtime. On the current verification host no Maya runtime has been authorized yet, so the real-Maya driver path remains `NOT_RUN`.
@@ -305,8 +305,8 @@ maya-plugin/
 
 ## Deep links
 
-- [Architecture](docs/Codex-Maya-Plugin-Architecture.md) · [架构文档](docs/Codex-Maya-Plugin-Architecture.zh_CN.md)
-- [Technical solution](docs/Codex-Maya-Plugin-Technical-Solution.md) · [技术方案](docs/Codex-Maya-Plugin-Technical-Solution.zh_CN.md)
+- [Architecture](docs/Maya-Design-Plugin-Architecture.md) · [架构文档](docs/Maya-Design-Plugin-Architecture.zh_CN.md)
+- [Technical solution](docs/Maya-Design-Plugin-Technical-Solution.md) · [技术方案](docs/Maya-Design-Plugin-Technical-Solution.zh_CN.md)
 - [Design spec](docs/superpowers/specs/2026-09-11-maya-plugin-design.md)
 - [Implementation plan](docs/superpowers/plans/2026-09-11-maya-plugin-implementation.md)
 

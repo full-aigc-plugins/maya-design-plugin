@@ -13,7 +13,7 @@ license: Apache-2.0 — see LICENSE
 
 - 用户问「这个场景里有哪些相机 / 帧范围是多少 / 有没有引用文件」
 - 导出前先做一次 dry-run 盘点，确认相机、分辨率、材质
-- 需要把场景信息交给 `codex-dreamina-3d` 做后续编排
+- 需要把场景信息交给 `dreamina-3d` 做后续编排
 - 需要在不出图的前提下判断场景是否包含未知插件（`inspection_status` 会变成 `degraded`）
 
 ## When NOT to use / 不适用场景（不该用本技能）
@@ -79,7 +79,7 @@ python3 scripts/maya_runner.py inspect --scene <path>     ← 你调用的
 导出前自检清单（checklist）：
 
 - [ ] `scene_id` 是 UUID v4 形状
-- [ ] `plugin_id` 等于 `codex-maya`，`schema_version` 等于 `1.0.0`
+- [ ] `plugin_id` 等于 `maya-design`，`schema_version` 等于 `1.0.0`
 - [ ] `display_mode` ∈ {`white_model`, `material_preview`, `existing_video`}
 - [ ] `resolution.width` 与 `resolution.height` 都 ≥ 1
 - [ ] `frame_range.start <= frame_range.end`

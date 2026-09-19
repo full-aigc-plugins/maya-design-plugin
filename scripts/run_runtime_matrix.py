@@ -13,7 +13,7 @@ What it records, per run:
   export     white-model Playblast, the artifact receipt, and media validation
   restore    pre/post scene state equality (the reversible guarantee)
   bridge     Jimeng link creation, if authorization was given
-  handoff    the receipt as validated by codex-dreamina-3d's own validator
+  handoff    the receipt as validated by dreamina-3d's own validator
 
 Usage:
 
@@ -191,7 +191,7 @@ def run_matrix(args) -> dict:
         }
 
     # --- handoff ------------------------------------------------------------
-    handoff_dir = Path(__file__).resolve().parents[1].parent / "codex-dreamina-3d-plugin" / "scripts"
+    handoff_dir = Path(__file__).resolve().parents[1].parent / "dreamina-3d-plugin" / "scripts"
     if handoff_dir.is_dir():
         if str(handoff_dir) not in sys.path:
             sys.path.insert(0, str(handoff_dir))
@@ -210,15 +210,15 @@ def run_matrix(args) -> dict:
         errors = handoff_validator.validate_artifact(receipt, media_path)
         evidence["steps"]["handoff"] = {
             "status": "observed" if not errors else "failed",
-            "validator": "codex-dreamina-3d/scripts/handoff_validator.py",
+            "validator": "dreamina-3d/scripts/handoff_validator.py",
             "errors": errors,
         }
         if errors:
-            raise MatrixError(f"codex-dreamina-3d rejected the receipt: {errors}")
+            raise MatrixError(f"dreamina-3d rejected the receipt: {errors}")
     else:
         evidence["steps"]["handoff"] = {
             "status": "skipped",
-            "note": f"codex-dreamina-3d not checked out at {handoff_dir}",
+            "note": f"dreamina-3d not checked out at {handoff_dir}",
         }
 
     return evidence

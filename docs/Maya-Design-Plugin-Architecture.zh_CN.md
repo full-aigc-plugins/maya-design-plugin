@@ -15,7 +15,7 @@
 
 `maya-design` 检查已授权的 Autodesk Maya 场景，对即将改动的每个值做快照，生成白模或材质 Playblast，不依赖外部探测工具直接校验产出的媒体，最后把它碰过的东西还原回去。即梦链接可通过官方上传器申请，且只在用户明确授权的那一次响应中返回。
 
-插件是受控执行器：发现 `mayapy`、用 argv 调用它，并把桥接 token 挡在稳定回执之外。它不上传到 Dreamina；该编排由 `codex-dreamina-3d` 负责。
+插件是受控执行器：发现 `mayapy`、用 argv 调用它，并把桥接 token 挡在稳定回执之外。它不上传到 Dreamina；该编排由 `dreamina-3d` 负责。
 
 ### 实现诚实度
 
@@ -90,7 +90,7 @@ flowchart LR
 | 快照并校验，而不是尽力还原 | 被静默改动的场景等于数据丢失 | 无 |
 | 在进程内解析 MP4 | 依赖未经验证的外部探测会让媒体结论无法核实 | 若出现平台背书的探测工具 |
 | 只诊断，不安装 | 改动用户的 Maya 环境不在范围内 | 用户明确要求执行修复动作 |
-| 上传不放进本插件 | `codex-dreamina-3d` 已经拥有该编排 | 无 |
+| 上传不放进本插件 | `dreamina-3d` 已经拥有该编排 | 无 |
 | 链接只在被授权的响应中返回 | 持久回执绝不应携带有效桥接 token | 无 |
 
 ## 6. 组件与依赖
@@ -177,7 +177,7 @@ python3 scripts/validate_distribution.py
 
 ### 互操作性
 
-产出的回执与 `codex-blender` 使用的媒体交接契约一致，并由 `codex-dreamina-3d` 消费。Maya 特有的细节绝不泄漏进 Dreamina 编排契约。
+产出的回执与 `blender-design` 使用的媒体交接契约一致，并由 `dreamina-3d` 消费。Maya 特有的细节绝不泄漏进 Dreamina 编排契约。
 
 ## 11. 部署、兼容性与演进
 

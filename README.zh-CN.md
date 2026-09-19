@@ -77,7 +77,7 @@
 
 ### 不负责
 
-- 上传到 Dreamina。该编排由 `codex-dreamina-3d` 负责。
+- 上传到 Dreamina。该编排由 `dreamina-3d` 负责。
 - 捆绑 Maya、编码器、供应商上传器源码或凭据。vendored Python 源码按校验和原样保留。
 - 为了修 `ModuleNotFoundError` 而安装 Python 包。插件只诊断并报告失败。
 - 声称运行期已验证。当前验证环境尚未授权任何 Maya 运行时，因此真实 Maya 驱动路径仍为 `NOT_RUN`。
@@ -302,8 +302,8 @@ maya-plugin/
 
 ## 深入文档
 
-- [Architecture](docs/Codex-Maya-Plugin-Architecture.md) · [架构文档](docs/Codex-Maya-Plugin-Architecture.zh_CN.md)
-- [Technical solution](docs/Codex-Maya-Plugin-Technical-Solution.md) · [技术方案](docs/Codex-Maya-Plugin-Technical-Solution.zh_CN.md)
+- [Architecture](docs/Maya-Design-Plugin-Architecture.md) · [架构文档](docs/Maya-Design-Plugin-Architecture.zh_CN.md)
+- [Technical solution](docs/Maya-Design-Plugin-Technical-Solution.md) · [技术方案](docs/Maya-Design-Plugin-Technical-Solution.zh_CN.md)
 - [设计规格](docs/superpowers/specs/2026-09-11-maya-plugin-design.md)
 - [实施计划](docs/superpowers/plans/2026-09-11-maya-plugin-implementation.md)
 

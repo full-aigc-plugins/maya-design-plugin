@@ -15,7 +15,7 @@
 
 `maya-design` inspects an authorized Autodesk Maya scene, snapshots every value it is about to change, produces a white-model or material-aware Playblast, validates the resulting media without an external probe, and restores what it touched. A Jimeng link can be requested through the official uploader, and it is returned only in the response the user explicitly authorized.
 
-The plugin is a guarded runner: it discovers `mayapy`, invokes it through argv, and keeps bridge tokens out of stable receipts. It does not upload to Dreamina; `codex-dreamina-3d` owns that orchestration.
+The plugin is a guarded runner: it discovers `mayapy`, invokes it through argv, and keeps bridge tokens out of stable receipts. It does not upload to Dreamina; `dreamina-3d` owns that orchestration.
 
 ### Implementation honesty
 
@@ -90,7 +90,7 @@ flowchart LR
 | Snapshot and verify instead of best-effort restore | A silently modified scene is a data-loss event | None |
 | Parse the MP4 in-process | An unverified external probe would make the media claim unverifiable | If a platform-blessed probe becomes available |
 | Diagnose without installing | Mutating the user's Maya environment is out of scope | An explicit user request for a repair action |
-| Keep upload out of this plugin | `codex-dreamina-3d` already owns orchestration | None |
+| Keep upload out of this plugin | `dreamina-3d` already owns orchestration | None |
 | Return the link only in the authorized response | A durable receipt must never carry a live bridge token | None |
 
 ## 6. Components and dependencies
@@ -177,7 +177,7 @@ python3 scripts/validate_distribution.py
 
 ### Interoperability
 
-The output receipt matches the media handoff contract used by `codex-blender` and consumed by `codex-dreamina-3d`. Maya-specific details never leak into the Dreamina orchestration contract.
+The output receipt matches the media handoff contract used by `blender-design` and consumed by `dreamina-3d`. Maya-specific details never leak into the Dreamina orchestration contract.
 
 ## 11. Deployment, compatibility, and evolution
 

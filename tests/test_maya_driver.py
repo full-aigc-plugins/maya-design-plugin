@@ -1,4 +1,4 @@
-"""End-to-end tests for the Codex-to-Maya driver.
+"""End-to-end tests for the Agent-to-Maya driver.
 
 These tests exercise the **real** chain:
 

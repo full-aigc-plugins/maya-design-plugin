@@ -295,7 +295,7 @@ def validate_receipt(receipt: Mapping[str, object], expected_digest: str | None 
     """Validate a Codex artifact receipt against the media on disk.
 
     The probe is run again here so the receipt cannot drift from the file
-    between when it was written and when Codex-dreamina-3d reads it. If
+    between when it was written and when Dreamina-3D reads it. If
     `expected_digest` is provided (the artifact_id receipt flow), the file
     must hash to that value.
     """

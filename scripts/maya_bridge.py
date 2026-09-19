@@ -34,7 +34,7 @@ JIMENG_VENDOR_DIR = Path(__file__).resolve().parent / "jimeng_third_party" / "ji
 JIMENG_VENDOR_CHECKSUM = (
     "33dc6dfb766dc43a515c91547ab58c26d044079296b92f5c4689b9eb5106191f"
 )
-_BRIDGE_SESSION_KEY = "_codex_maya_bridge_sessions"
+_BRIDGE_SESSION_KEY = "_maya_design_bridge_sessions"
 
 
 class SceneNotAuthorizedError(Exception):

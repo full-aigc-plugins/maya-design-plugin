@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Receipt adapter consumed by codex-dreamina-3d after local preview validation.
+"""Receipt adapter consumed by dreamina-3d after local preview validation.
 
 `maya-design`'s own receipt (`schemas/artifact_receipt.schema.json`) is the
-plugin's internal record. `codex-dreamina-3d` does not consume that shape: it
+plugin's internal record. `dreamina-3d` does not consume that shape: it
 validates an incoming preview receipt with `scripts/handoff_validator.py`, which
 requires `producer_plugin` / `producer_version` / `path` / `sha256` / `codec` /
 `container` / `dimensions` / `fps` / `bytes` / `camera` / `frame_range` /
@@ -13,7 +13,7 @@ from a produced artifact plus a media probe, and it **refuses** to emit a
 receipt the consumer would reject rather than pushing that failure downstream
 where the message is worse.
 
-Mirrors `codex-blender-plugin/scripts/dreamina_adapter.py`.
+Mirrors `blender-design-plugin/scripts/dreamina_adapter.py`.
 """
 
 from __future__ import annotations
@@ -37,7 +37,7 @@ PRODUCER_VERSION = "0.1.0"
 SCHEMA_VERSION = "1.0.0"
 CONTRACT_VERSION = "1.0.0"
 
-# Ranges enforced by codex-dreamina-3d's handoff_validator. Kept here so an
+# Ranges enforced by dreamina-3d's handoff_validator. Kept here so an
 # out-of-range artifact fails at the producer with a precise message instead of
 # arriving at the consumer as an opaque rejection.
 SUPPORTED_CODEC = "h264"
@@ -87,9 +87,9 @@ def build_preview_receipt(
     camera_name: str,
     frame_range: Mapping[str, object],
     preview_mode: str,
-    restoration_evidence: str = "Maya scene state restored and verified by the Codex driver",
+    restoration_evidence: str = "Maya scene state restored and verified by the Maya Design driver",
 ) -> dict:
-    """Translate a produced artifact into the codex-dreamina-3d receipt shape.
+    """Translate a produced artifact into the dreamina-3d receipt shape.
 
     ``fps`` is passed in rather than read from ``media``: media_probe reports the
     ISO BMFF *media timescale* (24000 for 24 fps), which is not a frame rate and
@@ -239,7 +239,7 @@ def run_export(request: Mapping[str, object], *, output: Path, explicit_root: st
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(
-        description="codex-dreamina-3d preview adapter for maya-design"
+        description="dreamina-3d preview adapter for maya-design"
     )
     parser.add_argument("--request")
     parser.add_argument("--receipt", required=True)
@@ -253,7 +253,7 @@ def main(argv=None) -> int:
 
     receipt_path = Path(args.receipt)
     try:
-        # Mirror codex-blender's adapter: a bare receipt path means "is a
+        # Mirror blender-design's adapter: a bare receipt path means "is a
         # previous run's receipt present?".
         if args.status:
             if receipt_path.is_file():
