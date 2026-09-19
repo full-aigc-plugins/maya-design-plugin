@@ -1,6 +1,6 @@
 {
   "name": "maya-design",
-  "version": "0.1.2+codex.20260919",
+  "version": "0.1.3+codex.20260919",
   "description": "Inspect Autodesk Maya scenes, create reversible Playblasts, and produce verified Jimeng links.",
   "author": {
     "name": "Full Stack Skills / PartMe.AI",

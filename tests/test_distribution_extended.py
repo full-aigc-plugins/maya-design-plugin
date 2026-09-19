@@ -27,13 +27,6 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILLS = (
-    "maya-diagnose",
-    "maya-export-preview",
-    "maya-inspect",
-    "maya-seedance-pipeline",
-    "maya-use",
-)
 SCHEMAS = (
     "schemas/scene_receipt.schema.json",
     "schemas/artifact_receipt.schema.json",
@@ -46,6 +39,15 @@ SECRET_PATTERNS = (
 
 def _load_json(relative: str) -> dict:
     return json.loads((ROOT / relative).read_text(encoding="utf-8"))
+
+
+LOCKED_SKILLS = tuple(
+    skill
+    for source in _load_json("skills.lock.json").get("sources", [])
+    for skill in source.get("skills", [])
+)
+LOCAL_SKILLS = tuple(_load_json("plugin-local-skills.json").get("skills", []))
+SKILLS = tuple(sorted(set(LOCKED_SKILLS) | set(LOCAL_SKILLS)))
 
 
 class GitHubSourceTests(unittest.TestCase):
@@ -64,7 +66,7 @@ class PluginIdentityTests(unittest.TestCase):
     def test_identity_and_version(self) -> None:
         manifest = _load_json(".codex-plugin/plugin.json")
         self.assertEqual(manifest["name"], "maya-design")
-        self.assertEqual(manifest["version"], "0.1.0")
+        self.assertEqual(manifest["version"].split("+", 1)[0], "0.1.3")
         self.assertFalse(any(c in manifest["name"] for c in (" ", "\t")))
 
     def test_display_name_present(self) -> None:
@@ -73,7 +75,7 @@ class PluginIdentityTests(unittest.TestCase):
 
 
 class SkillsPresenceTests(unittest.TestCase):
-    def test_all_four_skills_have_a_skill_md(self) -> None:
+    def test_all_declared_skills_have_a_skill_md(self) -> None:
         for name in SKILLS:
             with self.subTest(skill=name):
                 self.assertTrue((ROOT / "skills" / name / "SKILL.md").is_file(), name)

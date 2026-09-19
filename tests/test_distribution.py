@@ -32,7 +32,7 @@ class DistributionTests(unittest.TestCase):
     def test_manifest_and_marketplace(self) -> None:
         manifest = load_json(".codex-plugin/plugin.json")
         self.assertEqual(manifest["name"], PLUGIN_ID)
-        self.assertEqual(manifest["version"], "0.1.0")
+        self.assertEqual(manifest["version"].split("+", 1)[0], "0.1.3")
         self.assertEqual(manifest["repository"], REPOSITORY)
         self.assertEqual(manifest["skills"], "./skills/")
         self.assertIn("Jimeng link", manifest["description"])

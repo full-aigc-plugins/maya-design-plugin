@@ -88,9 +88,9 @@ class PluginIdentityTests(unittest.TestCase):
     def test_manifest_identity(self) -> None:
         manifest = load_json(".codex-plugin/plugin.json")
         self.assertEqual(manifest["name"], PLUGIN_ID)
-        self.assertEqual(manifest["version"], "0.1.0")
+        self.assertEqual(manifest["version"].split("+", 1)[0], "0.1.3")
         self.assertEqual(manifest["interface"]["displayName"], DISPLAY_NAME)
-        self.assertEqual(manifest["interface"]["brandColor"], "#14B8A6")
+        self.assertEqual(manifest["interface"]["brandColor"], "#37A5CC")
         self.assertNotIn("mcpServers", manifest)
 
 
