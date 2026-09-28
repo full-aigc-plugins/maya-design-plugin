@@ -41,7 +41,7 @@ def main() -> int:
 
     lines.append(f"python3: {sys.version.split()[0]}")
 
-    preflight = Path(__file__).resolve().parents[1] / "scripts" / "maya_preflight.py"
+    preflight = next((c for c in Path(__file__).resolve().parents if (c / "plugin.json").is_file()), Path(__file__).resolve().parents[1]) / "scripts" / "maya_preflight.py"
     lines.append("预检脚本: 就绪" if preflight.is_file() else "预检脚本: 缺失")
 
     try:
