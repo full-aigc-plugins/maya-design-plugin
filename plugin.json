@@ -1,0 +1,55 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "maya-design",
+  "version": "0.1.5",
+  "description": "Inspect Autodesk Maya scenes, create reversible Playblasts, and produce verified Jimeng links.",
+  "author": {
+    "name": "Full Stack Skills / PartMe.AI",
+    "url": "https://github.com/partme-ai"
+  },
+  "homepage": "https://github.com/full-aigc-plugins/maya-design-plugin",
+  "repository": "https://github.com/full-aigc-plugins/maya-design-plugin",
+  "license": "Apache-2.0",
+  "keywords": [
+    "maya",
+    "3d",
+    "playblast",
+    "animation",
+    "codex"
+  ],
+  "extensions": {
+    "com.openai": {
+      "receipt_contract_versions": [
+        "1.0.0"
+      ],
+      "interface": {
+        "displayName": "Autodesk Maya Design",
+        "shortDescription": "Inspect scenes and create reversible Playblasts",
+        "longDescription": "Inspect Maya scenes and reuse the official Jimeng uploader for reversible Playblast or existing-video links, with explicit authorization, media validation, diagnostics, and temporary-state restoration.",
+        "developerName": "Full Stack Skills / PartMe.AI",
+        "category": "Creativity",
+        "capabilities": [
+          "Interactive",
+          "Read",
+          "Write"
+        ],
+        "websiteURL": "https://github.com/full-aigc-plugins/maya-design-plugin",
+        "privacyPolicyURL": "https://github.com/full-aigc-plugins/maya-design-plugin/blob/main/PRIVACY.md",
+        "termsOfServiceURL": "https://github.com/full-aigc-plugins/maya-design-plugin/blob/main/TERMS.md",
+        "defaultPrompt": [
+          "Inspect this Maya scene and summarize its cameras and timeline",
+          "Create a safe Playblast, restore the Maya scene, and make a Jimeng link",
+          "Diagnose this Maya preview failure without installing software"
+        ],
+        "brandColor": "#37A5CC",
+        "composerIcon": "./assets/composer-icon.png",
+        "logo": "./assets/official-logo.png",
+        "logoDark": "./assets/official-logo.png",
+        "screenshots": []
+      }
+    },
+    "ai.nanoco.nanoclaw": {
+      "agentName": "Autodesk Maya Design"
+    }
+  }
+}

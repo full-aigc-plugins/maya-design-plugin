@@ -65,11 +65,17 @@ class ManifestLocationTests(unittest.TestCase):
     def test_uses_the_supported_compatibility_manifest(self) -> None:
         self.assertTrue(MANIFEST.is_file(), "missing .codex-plugin/plugin.json")
 
-    def test_portable_manifest_is_deliberately_absent(self) -> None:
-        # Documented decision in docs/portable-migration.md: portable root
-        # manifests stay inactive until both formats can be kept in sync.
-        self.assertFalse((ROOT / "plugin.json").exists())
-        self.assertFalse((ROOT / "mcp.json").exists())
+    def test_portable_manifest_is_present_and_conformant(self) -> None:
+        # Migrated 2026-09-28: root plugin.json is the portable Agent Plugins
+        # v1.0.0 manifest, shipped alongside the compatibility fallback.
+        # See docs/portable-migration.md.
+        self.assertTrue((ROOT / "plugin.json").is_file(), "missing portable manifest")
+        portable = json.loads((ROOT / "plugin.json").read_text(encoding="utf-8"))
+        self.assertEqual(
+            portable["$schema"],
+            "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+        )
+        self.assertEqual(portable["name"], "maya-design")
 
     def test_portable_components_sit_at_the_plugin_root(self) -> None:
         # Doc: "Keep plugin.json, mcp.json, skills/, and assets/ at the plugin root."

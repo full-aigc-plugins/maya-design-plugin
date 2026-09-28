@@ -56,8 +56,8 @@ class DistributionTests(unittest.TestCase):
             self.assertTrue((ROOT / directory).is_dir(), directory)
         for filename in ("LICENSE", "NOTICE", "PRIVACY.md", "TERMS.md", "THIRD_PARTY_NOTICES.md", ".gitignore", "docs/portable-migration.md", "scripts/validate_distribution.py"):
             self.assertTrue((ROOT / filename).is_file(), filename)
-        self.assertFalse((ROOT / "plugin.json").exists())
-        self.assertFalse((ROOT / "mcp.json").exists())
+        # Migrated 2026-09-28: portable Agent Plugins v1.0.0 surface.
+        self.assertTrue((ROOT / "plugin.json").is_file(), "missing portable manifest")
         self.assertEqual(png_shape("assets/official-logo.png"), (1024, 1024, 6))
         self.assertEqual(png_shape("assets/composer-icon.png"), (256, 256, 6))
 
