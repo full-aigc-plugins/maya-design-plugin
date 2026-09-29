@@ -1,61 +1,39 @@
 #!/usr/bin/env python3
-"""SessionStart hook: report Maya readiness for this plugin.
+"""SessionStart hook: plugin self-integrity check (advisory).
 
-Advisory only — always exits 0. On hosts without Maya the plugin still
-serves read-only preflight/diagnostics, which this summary states honestly.
+Contract, identical to the sibling check_*_intent / check_closeout hooks:
+only verifies files shipped with this package (and the interpreter version
+the hook itself needs); external apps, third-party CLIs and credentials are
+first-use setup owned by the skills. Everything intact -> print nothing,
+exit 0. Something missing -> one warning line, still exit 0. Any stdin
+(including malformed) is tolerated and never blocks a session.
 """
 from __future__ import annotations
 
-import glob
 import json
-import os
-import shutil
 import sys
 from pathlib import Path
 
-MAYA_GLOBS = [
-    "/Applications/Autodesk/maya*/Maya.app/Contents/MacOS/Maya",
-    "/Applications/Autodesk/maya*/Maya.app",
-]
-
-
-def find_maya() -> str:
-    explicit = os.environ.get("MAYA_LOCATION")
-    if explicit and Path(explicit).exists():
-        return explicit
-    for pattern in MAYA_GLOBS:
-        hits = sorted(glob.glob(pattern))
-        if hits:
-            return hits[-1]
-    return shutil.which("maya") or ""
+ROOT = next((c for c in Path(__file__).resolve().parents if (c / "plugin.json").is_file()), Path(__file__).resolve().parents[1])
 
 
 def main() -> int:
-    lines: list[str] = []
-
-    maya = find_maya()
-    if maya:
-        lines.append(f"Maya: {maya}")
-    else:
-        lines.append("Maya: 未找到——场景检查/Playblast 不可用，仅可运行只读预检（maya_preflight）与诊断")
-
-    lines.append(f"python3: {sys.version.split()[0]}")
-
-    preflight = next((c for c in Path(__file__).resolve().parents if (c / "plugin.json").is_file()), Path(__file__).resolve().parents[1]) / "scripts" / "maya_preflight.py"
-    lines.append("预检脚本: 就绪" if preflight.is_file() else "预检脚本: 缺失")
-
+    problems: list[str] = []
+    if not (ROOT / "scripts" / "maya_preflight.py").is_file():
+        problems.append("预检脚本缺失（包不完整）")
+    if problems:
+        print("Maya 设计环境告警：" + "；".join(problems))
+    # Drain the hook payload so the host never sees a broken pipe.
     try:
         sys.stdin.read()
-    except Exception:
+    except (OSError, ValueError, UnicodeDecodeError):
         pass
-
-    print("Maya 插件环境：" + "；".join(lines))
     return 0
 
 
 if __name__ == "__main__":
     try:
         json.load(sys.stdin)
-    except Exception:
+    except (ValueError, OSError):
         pass
     sys.exit(main())
