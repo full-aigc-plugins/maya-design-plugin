@@ -22,7 +22,7 @@
       "interface": {
         "displayName": "Autodesk Maya Design",
         "shortDescription": "Inspect scenes and create reversible Playblasts",
-        "logo": "https://cdn.jsdelivr.net/gh/full-aigc-plugins/maya-design-plugin@v0.1.5/assets/official-logo.png"
+        "logo": "https://cdn.jsdelivr.net/gh/full-aigc-plugins/maya-design-plugin@v0.2.0/assets/official-logo.png"
       }
     }
   ]
