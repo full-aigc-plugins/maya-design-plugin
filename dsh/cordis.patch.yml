@@ -4,4 +4,4 @@
 # for the other hosts.
 - insert:
     - id: maya-design-plugin
-      name: '@partme-dsh/maya-design'
+      name: 'maya-design'

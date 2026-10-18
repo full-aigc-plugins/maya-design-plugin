@@ -1,5 +1,5 @@
 {
-  "name": "@partme-dsh/maya-design",
+  "name": "maya-design",
   "version": "0.2.0",
   "description": "Inspect Autodesk Maya scenes, create reversible Playblasts, and produce verified Jimeng links.",
   "type": "module",
@@ -31,5 +31,6 @@
     "bundle": {
       "patch": "./cordis.patch.yml"
     }
-  }
+  },
+  "private": true
 }
