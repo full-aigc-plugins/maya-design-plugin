@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "maya-design",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Inspect Autodesk Maya scenes, create reversible Playblasts, and produce verified Jimeng links.",
   "author": {
     "name": "Full Stack Skills / PartMe.AI",
