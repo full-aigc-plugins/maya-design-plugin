@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "maya-design",
-  "version": "0.2.1",
-  "description": "Inspect Autodesk Maya scenes, create reversible Playblasts, and produce verified Jimeng links.",
+  "version": "0.1.5",
+  "description": "Read-only scene inspection, reversible Playblast export and error diagnosis, handing off to the official Jimeng uploader.",
   "author": {
     "name": "Full Stack Skills / PartMe.AI",
     "url": "https://github.com/partme-ai"
@@ -23,8 +23,8 @@
         "1.0.0"
       ],
       "interface": {
-        "displayName": "Autodesk Maya Design",
-        "shortDescription": "Inspect scenes and create reversible Playblasts",
+        "displayName": "3D Scenes · Maya Design",
+        "shortDescription": "Scene inspection, reversible Playblast and Jimeng links",
         "longDescription": "Inspect Maya scenes and reuse the official Jimeng uploader for reversible Playblast or existing-video links, with explicit authorization, media validation, diagnostics, and temporary-state restoration.",
         "developerName": "Full Stack Skills / PartMe.AI",
         "category": "Creativity",
@@ -42,10 +42,11 @@
           "Diagnose this Maya preview failure without installing software"
         ],
         "brandColor": "#37A5CC",
-        "composerIcon": "./assets/composer-icon.png",
+        "composerIcon": "./assets/official-logo.png",
         "logo": "./assets/official-logo.png",
         "logoDark": "./assets/official-logo.png",
-        "screenshots": []
+        "screenshots": [],
+        "composerIconDark": "./assets/official-logo.png"
       }
     },
     "ai.nanoco.nanoclaw": {

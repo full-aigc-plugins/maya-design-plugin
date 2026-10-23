@@ -1,7 +1,7 @@
 {
   "name": "maya-design",
-  "version": "0.2.1",
-  "description": "Inspect Autodesk Maya scenes, create reversible Playblasts, and produce verified Jimeng links.",
+  "version": "0.1.5",
+  "description": "Read-only scene inspection, reversible Playblast export and error diagnosis, handing off to the official Jimeng uploader.",
   "author": {
     "name": "Full Stack Skills / PartMe.AI"
   },
@@ -13,8 +13,8 @@
     "playblast"
   ],
   "interface": {
-    "displayName": "Autodesk Maya Design",
-    "shortDescription": "Inspect scenes and create reversible Playblasts",
+    "displayName": "3D Scenes · Maya Design",
+    "shortDescription": "Scene inspection, reversible Playblast and Jimeng links",
     "longDescription": "Inspect Autodesk Maya scenes, create reversible Playblasts, and hand off to Jimeng through the official uploader. Ships read-only diagnostics and a guarded runtime preflight.",
     "developerName": "Full Stack Skills / PartMe.AI",
     "websiteURL": "https://github.com/full-aigc-plugins/maya-design-plugin"

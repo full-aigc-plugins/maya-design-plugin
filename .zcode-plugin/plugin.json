@@ -1,15 +1,13 @@
 {
   "name": "maya-design",
-  "displayName": "Autodesk Maya Design",
+  "displayName": "3D Scenes · Maya Design",
   "displayName_i18n": {
-    "en": "Autodesk Maya Design",
-    "zh-CN": "Maya 三维动画"
+    "en": "3D Scenes · Maya Design"
   },
-  "version": "0.2.1",
-  "description": "Inspect Autodesk Maya scenes, create reversible Playblasts, and produce verified Jimeng links.",
+  "version": "0.1.5",
+  "description": "Read-only scene inspection, reversible Playblast export and error diagnosis, handing off to the official Jimeng uploader.",
   "description_i18n": {
-    "en": "Inspect Autodesk Maya scenes, create reversible Playblasts, and return a Jimeng link through the official uploader.",
-    "zh-CN": "检查 Autodesk Maya 场景、生成可回滚的 Playblast 预览，并经官方上传器返回即梦链接。"
+    "en": "Read-only scene inspection, reversible Playblast export and error diagnosis, handing off to the official Jimeng uploader."
   },
   "author": {
     "name": "Full Stack Skills / PartMe.AI",
