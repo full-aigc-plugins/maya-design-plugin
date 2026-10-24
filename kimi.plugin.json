@@ -13,7 +13,7 @@
     "playblast"
   ],
   "interface": {
-    "displayName": "3D Scenes · Maya Design",
+    "displayName": "Maya Design · 3D Scenes",
     "shortDescription": "Scene inspection, reversible Playblast and Jimeng links",
     "longDescription": "Inspect Autodesk Maya scenes, create reversible Playblasts, and hand off to Jimeng through the official uploader. Ships read-only diagnostics and a guarded runtime preflight.",
     "developerName": "Full Stack Skills / PartMe.AI",

@@ -23,7 +23,7 @@
         "1.0.0"
       ],
       "interface": {
-        "displayName": "3D Scenes · Maya Design",
+        "displayName": "Maya Design · 3D Scenes",
         "shortDescription": "Scene inspection, reversible Playblast and Jimeng links",
         "longDescription": "Inspect Maya scenes and reuse the official Jimeng uploader for reversible Playblast or existing-video links, with explicit authorization, media validation, diagnostics, and temporary-state restoration.",
         "developerName": "Full Stack Skills / PartMe.AI",

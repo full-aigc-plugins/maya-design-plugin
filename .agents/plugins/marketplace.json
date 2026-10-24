@@ -1,7 +1,7 @@
 {
   "name": "partme-ai-maya",
   "interface": {
-    "displayName": "3D Scenes · Maya Design"
+    "displayName": "Maya Design · 3D Scenes"
   },
   "plugins": [
     {
@@ -20,7 +20,7 @@
       "description": "Read-only scene inspection, reversible Playblast export and error diagnosis, handing off to the official Jimeng uploader.",
       "icon": "https://cdn.jsdelivr.net/gh/full-aigc-plugins/maya-design-plugin@v0.1.5/assets/official-logo.png",
       "interface": {
-        "displayName": "3D Scenes · Maya Design",
+        "displayName": "Maya Design · 3D Scenes",
         "shortDescription": "Scene inspection, reversible Playblast and Jimeng links",
         "logo": "https://cdn.jsdelivr.net/gh/full-aigc-plugins/maya-design-plugin@v0.1.5/assets/official-logo.png"
       }

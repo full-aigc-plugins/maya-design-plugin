@@ -1,8 +1,8 @@
 {
   "name": "maya-design",
-  "displayName": "3D Scenes · Maya Design",
+  "displayName": "Maya Design · 3D Scenes",
   "displayName_i18n": {
-    "en": "3D Scenes · Maya Design"
+    "en": "Maya Design · 3D Scenes"
   },
   "version": "0.1.5",
   "description": "Read-only scene inspection, reversible Playblast export and error diagnosis, handing off to the official Jimeng uploader.",
