@@ -1,7 +1,7 @@
 {
   "name": "maya-design",
   "version": "0.1.5",
-  "description": "Read-only scene inspection, reversible Playblast export and error diagnosis, handing off to the official Jimeng uploader.",
+  "description": "只读场景体检、可逆 Playblast 导出与错误诊断，交接官方即梦上传器。",
   "author": {
     "name": "Full Stack Skills / PartMe.AI"
   },
@@ -13,8 +13,8 @@
     "playblast"
   ],
   "interface": {
-    "displayName": "Maya Design · 3D Scenes",
-    "shortDescription": "Scene inspection, reversible Playblast and Jimeng links",
+    "displayName": "Maya（三维场景）",
+    "shortDescription": "场景体检、可逆 Playblast 与即梦链接",
     "longDescription": "Inspect Autodesk Maya scenes, create reversible Playblasts, and hand off to Jimeng through the official uploader. Ships read-only diagnostics and a guarded runtime preflight.",
     "developerName": "Full Stack Skills / PartMe.AI",
     "websiteURL": "https://github.com/full-aigc-plugins/maya-design-plugin"
@@ -32,5 +32,11 @@
       "command": "python3 ./hooks/check_maya_intent.py",
       "timeout": 15
     }
-  ]
+  ],
+  "displayName_i18n": {
+    "zh-CN": "Maya（三维场景）"
+  },
+  "description_i18n": {
+    "zh-CN": "只读场景体检、可逆 Playblast 导出与错误诊断，交接官方即梦上传器。"
+  }
 }

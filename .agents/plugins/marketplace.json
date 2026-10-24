@@ -17,13 +17,14 @@
       },
       "category": "Creativity",
       "version": "0.1.5",
-      "description": "Read-only scene inspection, reversible Playblast export and error diagnosis, handing off to the official Jimeng uploader.",
+      "description": "只读场景体检、可逆 Playblast 导出与错误诊断，交接官方即梦上传器。",
       "icon": "https://cdn.jsdelivr.net/gh/full-aigc-plugins/maya-design-plugin@v0.1.5/assets/official-logo.png",
       "interface": {
-        "displayName": "Maya Design · 3D Scenes",
-        "shortDescription": "Scene inspection, reversible Playblast and Jimeng links",
+        "displayName": "Maya（三维场景）",
+        "shortDescription": "场景体检、可逆 Playblast 与即梦链接",
         "logo": "https://cdn.jsdelivr.net/gh/full-aigc-plugins/maya-design-plugin@v0.1.5/assets/official-logo.png"
-      }
+      },
+      "displayName": "Maya（三维场景）"
     }
   ]
 }

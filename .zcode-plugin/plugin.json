@@ -1,13 +1,15 @@
 {
   "name": "maya-design",
-  "displayName": "Maya Design · 3D Scenes",
+  "displayName": "Maya（三维场景）",
   "displayName_i18n": {
-    "en": "Maya Design · 3D Scenes"
+    "en": "Maya Design · 3D Scenes",
+    "zh-CN": "Maya（三维场景）"
   },
   "version": "0.1.5",
-  "description": "Read-only scene inspection, reversible Playblast export and error diagnosis, handing off to the official Jimeng uploader.",
+  "description": "只读场景体检、可逆 Playblast 导出与错误诊断，交接官方即梦上传器。",
   "description_i18n": {
-    "en": "Read-only scene inspection, reversible Playblast export and error diagnosis, handing off to the official Jimeng uploader."
+    "en": "Read-only scene inspection, reversible Playblast export and error diagnosis, handing off to the official Jimeng uploader.",
+    "zh-CN": "只读场景体检、可逆 Playblast 导出与错误诊断，交接官方即梦上传器。"
   },
   "author": {
     "name": "Full Stack Skills / PartMe.AI",
