@@ -1,162 +1,160 @@
-# Autodesk Maya Design
+# Maya（三维场景）
 
-## Plugin marketplaces
+> 场景体检、可逆 Playblast 与即梦链接
 
-This plugin belongs to **AIGC content creation**.
+**版本**：0.1.5 · **许可证**：Apache-2.0 · **技能**：6 个
 
-| Category | Marketplace | Purpose |
-| --- | --- | --- |
-| Full-stack development | [Full Stack Plugins](https://github.com/partme-ai/full-stack-plugins) | Architecture and UI design, code understanding, quality checks, code review, workflow governance, and server operations |
-| AIGC content creation | [Full AIGC Plugins](https://github.com/partme-ai/full-aigc-plugins) | Image, video, audio, music, 3D, and multimodal content creation |
+[English](README.en.md) · [安装](#安装) · [快速开始](#快速开始) · [项目结构](#项目结构)
 
-![Autodesk Maya Design — inspect scenes and return reviewable previews](assets/maya-hero.png)
+## 项目定位
 
-> Inspect an authorized Maya scene, capture a reversible Playblast, and optionally return a Jimeng link through the official uploader, with every touched scene value restored afterwards.
+只读场景体检、可逆 Playblast 导出与错误诊断，交接官方即梦上传器。
 
-[![Version](https://img.shields.io/badge/release-0.2.1%2Bcodex.20261018-1A73E8)](https://github.com/full-aigc-plugins/maya-design-plugin/releases) [![Skills](https://img.shields.io/badge/skills-6-00A67E)](#skills) [![Maya](https://img.shields.io/badge/Maya-2022%2B-37A5CC)](#installation) [![License](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
+本插件属于研发工具线，面向需要在真实仓库或真实服务上完成操作、并保留可核验结果的用户。
 
-[English](README.md) | [简体中文](README.zh-CN.md) · [Install](#installation) · [Quick start](#quick-start) · [Skills](#skills) · [Architecture](docs/Maya-Design-Plugin-Architecture.md) · [Troubleshooting](#troubleshooting)
+## 一眼看懂
 
-## Positioning
+```text
+仓库 / 服务 / 配置 / 请求
+        │
+        ▼
+Maya（三维场景） 技能（检查 → 计划 → 执行 → 核验）
+        │
+        ├── MCP 服务
+        └── 固定 CLI / API
+        │
+        ▼
+变更结果 + 证据 + 回退路径
+```
 
-`maya-design` is a guarded runner, not a Maya reimplementation. It discovers `mayapy` on your machine, snapshots every scene value it is about to change, produces a white-model or material-aware Playblast, validates the resulting MP4 by parsing the container, then restores each snapshot field and verifies the restoration. The plugin never uploads without explicit authorization, never installs Python packages, and keeps local bridge tokens out of durable receipts.
+## 能力与边界
 
-The plugin ships no MCP server: the six Skills call `mayapy` through argv with explicit project and output scopes. The records under `docs/verification/` mark the live Maya path `NOT_RUN`; this README does not claim otherwise.
+| 能力 | 说明 | 边界 |
+|---|---|---|
+| 检查 | 读取当前状态与配置 | 不修改未授权目标 |
+| 计划 | 说明将执行的步骤与影响 | 高风险操作需明确确认 |
+| 执行 | 通过 MCP 或固定工具完成操作 | 不绕过权限与审计 |
+| 核验 | 回读结果、日志与状态 | 命令成功不等于目标达成 |
+| 恢复 | 保留回退路径与证据 | 不确定时不自动重放 |
 
-## Installation
+## 架构与核心流程
 
-### Prerequisites
+```text
+宿主 / Agent
+   │  调用技能
+   ▼
+skills/maya-design-*  ──►  MCP 服务 / 固定 CLI
+                              │
+                              ▼
+                     目标系统 / 仓库
+                              │
+                              ▼
+                     回读、核验、报告
+```
 
-- Autodesk Maya 2022 or newer installed on the same machine.
-- `mayapy` reachable through `MAYA_LOCATION` or on `PATH`.
-- Python 3.7 or newer, matching the interpreter embedded in your Maya build.
-- Development only: `jsonschema` from `requirements-dev.txt`.
+原则：
 
-Maya is commercial software and is not distributed through a package manager. Obtain it from your Autodesk account; the plugin does not download, license or bundle Maya.
+1. 先只读检查，再计划，再执行。
+2. 明确目标、范围、凭据和回退方式。
+3. 执行后回读真实现场，不只看退出码。
+4. 不确定时停止并报告，不自动重试有副作用的操作。
 
-### From the plugin marketplace
+## 兼容性
+
+| 项目 | 状态 |
+|---|---|
+| 宿主 | 支持 MCP 的宿主 |
+| 运行时 | 以插件清单与实际安装环境为准 |
+| 平台 | 以发行说明与目标系统为准 |
+
+## 安装
 
 ```bash
 codex plugin marketplace add partme-ai/full-aigc-plugins
 codex plugin add maya-design@full-aigc-plugins
 ```
 
-Restart the host and open a new task so the Skills load. Then ask for the diagnostic Skill before touching a scene.
+安装后重启宿主，先做只读检查。
 
-### Confirm the environment
+## 快速开始
+
+1. 确认目标、环境、权限和影响范围。
+2. 只读检查现状，记录基线。
+3. 执行一次有界变更。
+4. 回读目标状态、日志和关键指标。
+5. 保存证据；失败时按回退路径恢复。
+
+## 配置
+
+按插件文档配置 MCP 地址、认证方式和目标环境。不要把令牌、密码或私钥写入仓库。
+
+## 扩展契约
+
+新增技能时应使用 `maya-design-` 前缀，声明触发条件、权限边界和失败处理，通过 MCP 或固定工具执行，并在变更后回读核验。
+
+## 重试、幂等与恢复
+
+- 失败后先检查目标当前状态。
+- 不自动重放已产生副作用的操作。
+- 重试前确认幂等条件与回退路径。
+- 保留命令、日志和结果证据。
+
+## 数据与状态
+
+- 凭据只从安全配置读取。
+- 变更前后的状态分别记录。
+- 不把生产数据复制到不受控目录。
+
+## 安全
+
+- 遵循最小权限原则。
+- 高风险操作必须明确确认。
+- 发现凭据泄露先轮换，再清理痕迹。
+- 不绕过审计、权限或分支保护。
+
+## 可观测性与运行
+
+记录命令、目标、时间、结果和关键指标；交付前回读一次真实状态。
+
+## 开发与验证
 
 ```bash
-codex plugin list
+node --test
+python3 -m pytest
 ```
 
-The entry should read `maya-design@full-aigc-plugins`. After that, run `/maya-diagnose`; it reports the discovered Maya version, Python version and module path count, or a typed failure code such as `MAYA_NOT_FOUND` instead of guessing.
+## 打包与发布
 
-## Quick start
+版本与清单、市场、tag 一致；发布后重新安装并做一次只读检查。
 
-```mermaid
-flowchart LR
-    A[Authorized scene] --> B[Discover mayapy and ABI]
-    B --> C{Supported?}
-    C -->|no| D[Typed diagnostic]
-    C -->|yes| E[Snapshot scene state]
-    E --> F[Playblast capture]
-    F --> G[Parse and validate MP4]
-    G --> H[Restore and verify]
-    H --> I{Upload authorized?}
-    I -->|yes| J[Ephemeral Jimeng link]
-    I -->|no| K[Local preview only]
-```
+## 升级与迁移
 
-Ask for an inspection first, then a reversible preview:
+升级前备份配置与状态；确认兼容性；迁移后重新核验连接和权限。
+
+## 故障排查
+
+| 现象 | 检查 |
+|---|---|
+| 连接失败 | 地址、网络、认证 |
+| 权限不足 | 账号角色与令牌范围 |
+| 操作无效果 | 回读目标状态与日志 |
+| 结果不确定 | 停止重试，先核对现场 |
+
+## 项目结构
 
 ```text
-Inspect this Maya scene and list its cameras, frame range and render settings.
-Then render a white-model Playblast from the current camera over the existing range,
-restore the scene, and do not upload anything yet.
+maya-design-plugin/
+├── .zcode-plugin/      # ZCode 清单
+├── .codex-plugin/      # Codex 清单
+├── skills/             # 6 个技能
+├── docs/               # 架构与验证记录
+└── assets/             # 图标与静态资源
 ```
 
-Expected observation: the camera and render settings are listed, the snapshot is taken, the MP4 is validated, and the restoration step confirms each value went back. A mismatch fails with `RESTORE_UNCONFIRMED` instead of reporting success.
+## 贡献与支持
 
-## What you can build
+提交问题时附上插件版本、宿主、目标环境、命令、日志和预期结果。不要附凭据或生产数据。
 
-| Workflow | Built-in path | Verifiable output |
-| --- | --- | --- |
-| Read a scene before acting | `maya-inspect` | Scene receipt covering cameras, range, resolution, references and unknown plug-ins |
-| Review a preview safely | `maya-export-preview` | White-model or material Playblast plus codec, fps, size and SHA-256 |
-| Reuse an existing render | `maya-export-preview` (`existing_video`) | Registered local clip without touching the Maya session |
-| Explain a broken environment | `maya-diagnose` | Typed failure code, paths excluded from output |
-| Hand a preview to Seedance | `maya-seedance-pipeline` | Validated preview plus a Dreamina 3D handoff (experimental) |
+## 许可证
 
-## Skills
-
-| Skill | What it does |
-| --- | --- |
-| `maya-use` | Routes a vague or orientation request to inspect, export-preview or diagnose. |
-| `maya-harness` | Calling spec: read-only preflight, `MAYA_LOCATION` resolution and the no-runtime posture. |
-| `maya-inspect` | Read-only scene inventory producing a scene receipt. |
-| `maya-export-preview` | Reversible Playblast export with an artifact receipt and restoration status. |
-| `maya-diagnose` | Classifies Maya errors without installing anything. |
-| `maya-seedance-pipeline` | Drives a validated Playblast through the Dreamina 3D pipeline. |
-
-## Slash commands
-
-| Command | What it does |
-| --- | --- |
-| `/maya` | Entry point; routes scene inspection, preview and diagnostics. |
-| `/maya-inspect` | Read-only scene inspection: hierarchy, references, materials, timeline. |
-| `/maya-export-preview` | Reversible Playblast preview and optional Jimeng link. |
-| `/maya-diagnose` | Runtime diagnostics: install location, Python, plug-ins and preflight. |
-| `/maya-seedance` | Experimental Playblast → Seedance path with validation and download checks. |
-
-## Configuration
-
-| Setting | Where it lives | Notes |
-| --- | --- | --- |
-| Maya installation | `MAYA_LOCATION` environment variable | Used when `mayapy` is not on `PATH` |
-| Maya Python version | `MAYA_PYTHON_VERSION` environment variable | Read during ABI validation |
-| Credentials | None | The plugin stores no secret and installs no package |
-
-## Architecture and security
-
-Codex owns orchestration; Maya owns scene data; this plugin owns the snapshot set, the argv-only bridge invocation and the validators. The authors receive no scene data.
-
-- Every temporary change (selection, current time, playback range, camera, active panel, render settings) is snapshotted and compared before and after the run.
-- Publication needs an explicit authorization for that specific response, and the returned link is never written into a durable receipt.
-- Diagnostics redact local paths; the bridge token exists only inside the `mayapy` subprocess.
-- Operations are bounded by a timeout and fail with `TIMEOUT` rather than running indefinitely; nothing retries automatically.
-
-| Evidence | Status |
-| --- | --- |
-| Offline component suite | Recorded in `docs/verification/offline.md` |
-| Real Maya discovery, Playblast capture, browser hand-off | `NOT_RUN`; see `docs/verification/maya-runtime.md` |
-| Supported range | Maya 2022+ with `mayapy`; older versions and Linux installs without `MAYA_LOCATION` are out of scope |
-
-## Troubleshooting
-
-| Symptom | Check first | Resolution |
-| --- | --- | --- |
-| `MAYA_NOT_FOUND` | Maya installation and `MAYA_LOCATION` | Install Maya 2022+ or set `MAYA_LOCATION` |
-| `ABI_MISMATCH` | Maya version and embedded Python | Point the runner at a supported Maya |
-| `MODULE_LOAD_FAILED` | Maya module path | Fix the environment; the plugin will not install packages |
-| `RESTORE_UNCONFIRMED` | The reported field | Inspect the scene before continuing; do not assume it is clean |
-| `MEDIA_INVALID` | The produced file | Re-run the Playblast; a parse failure is a hard failure |
-| Live behaviour is expected | The runtime record | Only offline behaviour is verified on this host |
-
-## Upgrade
-
-```bash
-codex plugin marketplace upgrade full-aigc-plugins
-codex plugin add maya-design@full-aigc-plugins
-```
-
-Re-run `/maya-diagnose` after an upgrade; the supported Maya range and the receipt contract are versioned, and this release declares receipt contract `1.0.0`.
-
-Current packaged version: `0.2.1+codex.20261018` (development preview).
-
-## Contributing and support
-
-Open functional issues at <https://github.com/full-aigc-plugins/maya-design-plugin/issues>. State the Maya version and Python ABI you verified against, whether the change alters the snapshot set or the receipt shape, and include the affected tests.
-
-## License
-
-Apache-2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE).
+Apache-2.0，见 [LICENSE](LICENSE)。
