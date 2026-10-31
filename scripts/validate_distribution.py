@@ -23,7 +23,7 @@ SECRET_PATTERNS = (
 )
 REQUIRED_FILES = (
     "README.md",
-    "README.zh-CN.md",
+    "README.en.md",
     "LICENSE",
     "NOTICE",
     "PRIVACY.md",

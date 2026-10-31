@@ -7,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_ID = "maya-design"
-DISPLAY_NAME = "Autodesk Maya Design"
+DISPLAY_NAME = "Maya Design · 3D Scenes"
 REPOSITORY = "https://github.com/full-aigc-plugins/maya-design-plugin"
 BRAND_COLOR = "#37A5CC"
 
@@ -35,14 +35,14 @@ class DistributionTests(unittest.TestCase):
         self.assertEqual(manifest["version"].split("+", 1)[0], "0.1.5")
         self.assertEqual(manifest["repository"], REPOSITORY)
         self.assertEqual(manifest["skills"], "./skills/")
-        self.assertIn("Jimeng link", manifest["description"])
+        self.assertIn("Jimeng", manifest["interface"]["shortDescription"])
         self.assertNotIn("mcpServers", manifest)
         interface = manifest["interface"]
         self.assertEqual(interface["displayName"], DISPLAY_NAME)
         self.assertEqual(interface["brandColor"], BRAND_COLOR)
         self.assertEqual(interface["logo"], "./assets/official-logo.png")
         self.assertEqual(interface["logoDark"], "./assets/official-logo.png")
-        self.assertEqual(interface["composerIcon"], "./assets/composer-icon.png")
+        self.assertEqual(interface["composerIcon"], "./assets/official-logo.png")
         self.assertLessEqual(len(interface["defaultPrompt"]), 3)
         self.assertTrue(all(len(prompt) <= 128 for prompt in interface["defaultPrompt"]))
         marketplace = load_json(".agents/plugins/marketplace.json")
