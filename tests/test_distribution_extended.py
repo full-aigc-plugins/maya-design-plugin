@@ -71,7 +71,7 @@ class PluginIdentityTests(unittest.TestCase):
 
     def test_display_name_present(self) -> None:
         manifest = _load_json(".codex-plugin/plugin.json")
-        self.assertEqual(manifest["interface"]["displayName"], "Autodesk Maya Design")
+        self.assertEqual(manifest["interface"]["displayName"], "Maya Design · 3D Scenes")
 
 
 class SkillsPresenceTests(unittest.TestCase):
