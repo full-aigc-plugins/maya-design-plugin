@@ -17,7 +17,7 @@ from jsonschema.exceptions import SchemaError, ValidationError
 
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_ID = "maya-design"
-DISPLAY_NAME = "Autodesk Maya Design"
+DISPLAY_NAME = "Maya Design · 3D Scenes"
 SCHEMA_VERSION = "1.0.0"
 SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 UUID_V4_PATTERN = re.compile(
