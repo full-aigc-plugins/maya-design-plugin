@@ -51,6 +51,15 @@
     },
     "ai.nanoco.nanoclaw": {
       "agentName": "Autodesk Maya Design"
+    },
+    "ai.partme": {
+      "displayName": "Maya（三维场景）",
+      "displayName_i18n": {
+        "zh-CN": "Maya（三维场景）"
+      },
+      "description_i18n": {
+        "zh-CN": "只读场景体检、可逆 Playblast 导出与错误诊断，交接官方即梦上传器。"
+      }
     }
   }
 }
