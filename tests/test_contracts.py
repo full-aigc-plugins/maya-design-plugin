@@ -17,7 +17,7 @@ from jsonschema.exceptions import SchemaError, ValidationError
 
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_ID = "maya-design"
-DISPLAY_NAME = "Maya Design · 3D Scenes"
+DISPLAY_NAME = "Maya（三维场景）"
 SCHEMA_VERSION = "1.0.0"
 SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 UUID_V4_PATTERN = re.compile(
@@ -88,7 +88,7 @@ class PluginIdentityTests(unittest.TestCase):
     def test_manifest_identity(self) -> None:
         manifest = load_json(".codex-plugin/plugin.json")
         self.assertEqual(manifest["name"], PLUGIN_ID)
-        self.assertEqual(manifest["version"].split("+", 1)[0], "0.1.5")
+        self.assertEqual(manifest["version"].split("+", 1)[0], "0.2.2")
         self.assertEqual(manifest["interface"]["displayName"], DISPLAY_NAME)
         self.assertEqual(manifest["interface"]["brandColor"], "#37A5CC")
         self.assertNotIn("mcpServers", manifest)
