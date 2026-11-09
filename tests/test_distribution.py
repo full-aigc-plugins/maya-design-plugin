@@ -35,7 +35,7 @@ class DistributionTests(unittest.TestCase):
         self.assertEqual(manifest["version"].split("+", 1)[0], "0.2.2")
         self.assertEqual(manifest["repository"], REPOSITORY)
         self.assertEqual(manifest["skills"], "./skills/")
-        self.assertIn("Jimeng", manifest["interface"]["shortDescription"])
+        self.assertIn("即梦", manifest["interface"]["shortDescription"])
         self.assertNotIn("mcpServers", manifest)
         interface = manifest["interface"]
         self.assertEqual(interface["displayName"], DISPLAY_NAME)
