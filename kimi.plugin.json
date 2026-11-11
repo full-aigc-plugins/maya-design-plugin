@@ -1,6 +1,6 @@
 {
   "name": "maya-design",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "先体检 Maya 场景再导出：只读检查、可逆 Playblast、错误诊断，交接官方即梦上传。",
   "author": {
     "name": "Full Stack Skills / PartMe.AI"
